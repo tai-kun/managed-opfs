@@ -1,7 +1,7 @@
 /**
  * 成功結果を表すオブジェクトです。
  *
- * @template TValue 結果の値の型
+ * @template TValue 結果の値の型です。
  */
 export interface ResultOk<TValue = unknown> {
   /**
@@ -23,7 +23,7 @@ export interface ResultOk<TValue = unknown> {
     /**
      * 成功したならその値を返し、失敗したならその原因を投げます。何も投げずに成功した結果の値を返します。
      *
-     * @returns 成功した結果の値
+     * @returns 成功した結果の値です。
      */
     (): TValue;
   };
@@ -75,10 +75,6 @@ const Result = {
    * 失敗した結果を表す `ResultErr` オブジェクトを作成する関数です。
    */
   err: createResultErr,
-  /**
-   * (非)同期関数を実行し、その結果を `Result` オブジェクトとして返す関数です。
-   */
-  try: tryAsync,
 };
 
 export default Result;
@@ -86,25 +82,25 @@ export default Result;
 /**
  * 成功した結果を表す `ResultOk` オブジェクトを作成します。
  *
- * @returns 成功した結果を表す `ResultOk` オブジェクト
+ * @returns 成功した結果を表す `ResultOk` オブジェクトです。
  */
 function createResultOk(): ResultOk<unknown>;
 
 /**
  * 成功した結果を表す `ResultOk` オブジェクトを作成します。
  *
- * @template TValue 結果の値の型
- * @param value 成功した値
- * @returns 成功した結果を表す `ResultOk` オブジェクト
+ * @template TValue 結果の値の型です。
+ * @param value 成功した値です。
+ * @returns 成功した結果を表す `ResultOk` オブジェクトです。
  */
 function createResultOk<TValue>(value: TValue): ResultOk<TValue>;
 
 /**
  * 成功した結果を表す `ResultOk` オブジェクトを作成します。
  *
- * @template TValue 結果の値の型
- * @param value 成功した値
- * @returns 成功した結果を表す `ResultOk` オブジェクト
+ * @template TValue 結果の値の型です。
+ * @param value 成功した値です。
+ * @returns 成功した結果を表す `ResultOk` オブジェクトです。
  */
 function createResultOk<TValue>(value?: TValue): ResultOk<TValue | undefined>;
 
@@ -121,8 +117,8 @@ function createResultOk(value?: unknown): ResultOk<unknown> {
 /**
  * 失敗した結果を表す `ResultErr` オブジェクトを作成します。
  *
- * @param reason 失敗した原因
- * @returns 失敗した結果を表す `ResultErr` オブジェクト
+ * @param reason 失敗した原因です。
+ * @returns 失敗した結果を表す `ResultErr` オブジェクトです。
  */
 function createResultErr(reason: unknown): ResultErr {
   return {
@@ -132,19 +128,4 @@ function createResultErr(reason: unknown): ResultErr {
       throw this.reason;
     },
   };
-}
-
-/**
- * (非)同期関数を実行し、その結果を `Result` オブジェクトとして返します。
- *
- * @template TValue 結果の値の型
- * @param fn 実行する同期関数
- * @returns 関数の実行結果を表す `Result` オブジェクト
- */
-async function tryAsync<TValue>(fn: { (): PromiseLike<TValue> }): Promise<Result<TValue>> {
-  try {
-    return Result.ok(await fn());
-  } catch (reason) {
-    return Result.err(reason);
-  }
 }

@@ -38,28 +38,3 @@ describe("Result.err", () => {
     expect(() => result.unwrap()).toThrow(reason);
   });
 });
-
-describe("Result.try", () => {
-  test("非同期関数が正常に完了した場合、成功の Result を返す", async ({ expect }) => {
-    const result = await Result.try(async () => "成功値");
-
-    expect(result.ok).toBe(true);
-    if (result.ok) {
-      expect(result.value).toBe("成功値");
-      expect(result.unwrap()).toBe("成功値");
-    }
-  });
-
-  test("非同期関数が例外を投げた場合、失敗の Result を返す", async ({ expect }) => {
-    const error = new Error("非同期の失敗");
-    const result = await Result.try(async () => {
-      throw error;
-    });
-
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.reason).toBe(error);
-      expect(() => result.unwrap()).toThrow(error);
-    }
-  });
-});
