@@ -766,7 +766,7 @@ export default class Catalogdb {
    * @param inp ファイルの付帯情報を取得するための入力パラメーターです。
    * @returns ファイルの付帯情報を取得した結果です。
    */
-  @mutex
+  @mutex.readonly
   public async read(inp: ReadInput): Promise<ReadOutput> {
     const { filePath } = inp;
     const rows = await this.#query(sql`
@@ -815,7 +815,7 @@ export default class Catalogdb {
    * @param inp 実際に保存されているファイルの識別子を取得するための入力パラメーターです。
    * @returns 実際に保存されているファイルの識別子の取得した結果です。
    */
-  @mutex
+  @mutex.readonly
   public async readEntityId(inp: ReadEntityIdInput): Promise<ReadEntityIdOutput> {
     const { filePath } = inp;
     const rows = await this.#query(sql`
@@ -844,7 +844,7 @@ export default class Catalogdb {
    * @param inp ファイルの説明文を取得するための入力パラメーターです。
    * @returns ファイルの説明文を取得した結果です。
    */
-  @mutex
+  @mutex.readonly
   public async readDescription(inp: ReadDescriptionInput): Promise<ReadDescriptionOutput> {
     const { filePath } = inp;
     const rows = await this.#query(sql`
@@ -873,7 +873,7 @@ export default class Catalogdb {
    * @param inp ファイルのメタデータを取得するための入力パラメーターです。
    * @returns ファイルのメタデータを取得した結果です。
    */
-  @mutex
+  @mutex.readonly
   public async readMetadata(inp: ReadMetadataInput): Promise<ReadMetadataOutput> {
     const { filePath } = inp;
     const rows = await this.#query(sql`
@@ -1152,7 +1152,7 @@ export default class Catalogdb {
    * @param inp パスが存在するか確認するための入力パラメーターです。
    * @returns パスが存在するか確認した結果です。
    */
-  @mutex
+  @mutex.readonly
   public async exists(inp: ExistsInput): Promise<ExistsOutput> {
     if ("filePath" in inp) {
       const { filePath } = inp;
@@ -1205,7 +1205,7 @@ export default class Catalogdb {
    * @param inp ファイルやディレクトリのステータス情報を取得するための入力パラメーターです。
    * @returns ファイルやディレクトリのステータス情報を取得した結果です。
    */
-  @mutex
+  @mutex.readonly
   public async stat(inp: StatInput): Promise<StatOutput> {
     const { path } = inp;
     const {
@@ -1261,7 +1261,7 @@ export default class Catalogdb {
    * @param inp ファイルの説明文を対象に全文検索するための入力パラメーターです。
    * @returns 検索結果
    */
-  @mutex
+  @mutex // インデックスを作成するために .readonly はつけられない。
   public async search(inp: SearchInput): Promise<SearchOutput[]> {
     const {
       query,
@@ -1338,7 +1338,7 @@ export default class Catalogdb {
    * @param inp ディレクトリまたはファイルをリストアップするための入力パラメーターです。
    * @returns リストアップした結果です。
    */
-  @mutex
+  @mutex.readonly
   public async list(inp: ListInput): Promise<ListOutput[]> {
     const {
       limit,

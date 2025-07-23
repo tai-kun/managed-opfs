@@ -476,7 +476,7 @@ export default class ManagedOpfs {
    * @param options 書き込みストリームのオプションです。
    * @returns 書き込みストリームです。
    */
-  @mutex
+  @mutex.readonly
   public async createWritable(
     path: FilePathLike,
     options: CreateWritableOptions | undefined = {},
@@ -531,7 +531,7 @@ export default class ManagedOpfs {
    * @param path ファイルパスです。
    * @returns ファイルです。
    */
-  @mutex
+  @mutex.readonly
   public async readFile(path: FilePathLike): Promise<File> {
     if (!this.#bucket) {
       throw new MopfsError("ManagedOpfs not open");
@@ -813,7 +813,7 @@ export default class ManagedOpfs {
    * @param options 上書きストリームのオプションです。
    * @returns 上書きストリームです。
    */
-  @mutex
+  @mutex.readonly
   public async createOverwritable(
     path: FilePathLike,
     options: CreateOverwritableOptions | undefined = {},
@@ -966,7 +966,7 @@ export default class ManagedOpfs {
    * @returns `true` なら存在します。
    */
   public async exists(path: FilePathLike | readonly string[]): Promise<boolean>;
-  @mutex
+  @mutex.readonly
   public async exists(path: FilePathLike | readonly string[]): Promise<boolean> {
     if (!this.#bucket) {
       throw new MopfsError("ManagedOpfs not open");
@@ -1019,7 +1019,7 @@ export default class ManagedOpfs {
    * @param path バケット内のパスです。
    * @returns ファイルやディレクトリのステータス情報です。
    */
-  @mutex
+  @mutex.readonly
   public async stat(path: FilePathLike): Promise<Stats> {
     if (!this.#bucket) {
       throw new MopfsError("ManagedOpfs not open");
@@ -1037,7 +1037,7 @@ export default class ManagedOpfs {
    * @param options ファイルの説明文を対象に全文検索するためのオプションです。
    * @returns ファイルの説明文を対象に全文検索した結果です。
    */
-  @mutex
+  @mutex.readonly
   public async searchFile(
     dirPath: readonly string[],
     query: string,
@@ -1070,7 +1070,7 @@ export default class ManagedOpfs {
    * @param options ディレクトリまたはファイルをリストアップするためのオプションです。
    * @returns リストアップした結果です。
    */
-  @mutex
+  @mutex.readonly
   public async list(dirPath: readonly string[], options: ListOptions): Promise<ListItem[]> {
     if (!this.#bucket) {
       throw new MopfsError("ManagedOpfs not open");

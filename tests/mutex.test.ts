@@ -1,47 +1,141 @@
-import { test, vi } from "vitest";
+import { test } from "vitest";
 import mutex from "../src/mutex.js";
 
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
 
-test("同時実行性が 1 である", async ({ expect }) => {
-  using spy = vi.spyOn(console, "log").mockImplementation(() => {});
-
+test("書き込みは直列", async ({ expect }) => {
   class Runner {
+    private logs: string[];
+
+    constructor(logs: string[]) {
+      this.logs = logs;
+    }
+
     async runWithoutMutex(ms: number, value: string) {
       await sleep(ms);
-      console.log(value);
+      this.logs.push(value);
+      this.logs;
     }
 
     @mutex
     async runWithMutex(ms: number, value: string) {
       await sleep(ms);
-      console.log(value);
+      this.logs.push(value);
     }
   }
 
-  const runner = new Runner();
+  const logs: string[] = [];
+  const runner = new Runner(logs);
   // without mutex
   await Promise.all([
-    runner.runWithoutMutex(400, "A"),
-    runner.runWithoutMutex(200, "B"),
+    runner.runWithoutMutex(600, "A"),
+    runner.runWithoutMutex(300, "B"),
     runner.runWithoutMutex(0, "C"),
   ]);
   // with mutex
   await Promise.all([
-    runner.runWithMutex(400, "A"),
-    runner.runWithMutex(200, "B"),
+    runner.runWithMutex(600, "A"),
+    runner.runWithMutex(300, "B"),
     runner.runWithMutex(0, "C"),
   ]);
-  await vi.waitUntil(() => spy.mock.calls.length === 6);
 
-  expect(spy.mock.calls).toStrictEqual([
+  expect(logs).toStrictEqual([
     // without mutex
-    ["C"],
-    ["B"],
-    ["A"],
+    "C",
+    "B",
+    "A",
     // with mutex
-    ["A"],
-    ["B"],
-    ["C"],
+    "A",
+    "B",
+    "C",
+  ]);
+});
+
+test("読み取りは並行", async ({ expect }) => {
+  class Runner {
+    private logs: string[];
+
+    constructor(logs: string[]) {
+      this.logs = logs;
+    }
+
+    async runWithoutMutex(ms: number, value: string) {
+      await sleep(ms);
+      this.logs.push(value);
+    }
+
+    @mutex.readonly
+    async runWithMutex(ms: number, value: string) {
+      await sleep(ms);
+      this.logs.push(value);
+    }
+  }
+
+  const logs: string[] = [];
+  const runner = new Runner(logs);
+  // without mutex
+  await Promise.all([
+    runner.runWithoutMutex(600, "A"),
+    runner.runWithoutMutex(300, "B"),
+    runner.runWithoutMutex(0, "C"),
+  ]);
+  // with mutex
+  await Promise.all([
+    runner.runWithMutex(600, "A"),
+    runner.runWithMutex(300, "B"),
+    runner.runWithMutex(0, "C"),
+  ]);
+
+  expect(logs).toStrictEqual([
+    // without mutex
+    "C",
+    "B",
+    "A",
+    // with mutex
+    "C",
+    "B",
+    "A",
+  ]);
+});
+
+test("直列と並行の組み合わせは直列", async ({ expect }) => {
+  class Runner {
+    private logs: string[];
+
+    constructor(logs: string[]) {
+      this.logs = logs;
+    }
+
+    @mutex
+    async write(ms: number, value: string) {
+      await sleep(ms);
+      this.logs.push("W:" + value);
+    }
+
+    @mutex.readonly
+    async read(ms: number, value: string) {
+      await sleep(ms);
+      this.logs.push("R:" + value);
+    }
+  }
+
+  const logs: string[] = [];
+  const runner = new Runner(logs);
+  await Promise.all([
+    runner.write(300, "A"),
+    runner.write(0, "B"),
+    runner.read(600, "A"),
+    runner.read(300, "B"),
+    runner.write(0, "C"),
+    runner.read(0, "B"),
+  ]);
+
+  expect(logs).toStrictEqual([
+    "W:A",
+    "W:B",
+    "R:B",
+    "R:A",
+    "W:C",
+    "R:B",
   ]);
 });
