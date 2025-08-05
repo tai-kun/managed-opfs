@@ -35,5 +35,5 @@ test("ArrayBuffer を Uint8Array に変換する", ({ expect }) => {
 test("サポートされていない型に対してエラーを投げる", ({ expect }) => {
   const input: any = 123;
 
-  expect(() => toUint8Array(input)).toThrowError("Source that cannot be Uint8Array");
+  expect(() => toUint8Array(input)).toThrowError("Expected Uint8ArraySource, but got number");
 });

@@ -10,12 +10,14 @@ export interface ConsoleLikeLogger {
    * @param message デバッグメッセージです。
    */
   debug(message: string): void;
+
   /**
    * 諸情報を記録します。
    *
    * @param message 諸情報です。
    */
   info(message: string): void;
+
   /**
    * エラーメッセージを記録します。
    *

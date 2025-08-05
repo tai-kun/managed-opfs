@@ -36,6 +36,7 @@ export type DuckdbOptions = Readonly<{
    * DuckDB の各種モジュールの情報です。
    */
   bundle: DuckdbBundle;
+
   /**
    * DuckDB のロガーです。
    *
@@ -92,6 +93,7 @@ export interface Json {
    * JSON 文字列を JavaScript の値に変換する関数です。
    */
   readonly parse: JsonParse;
+
   /**
    * JavaScript の値を JSON 文字列に変換する関数です。
    */
@@ -106,33 +108,39 @@ type CatalogdbInput = Readonly<{
    * ログを記録する関数群です。
    */
   logger: ConsoleLikeLogger;
+
   /**
    * バケット名です。
    */
   bucketName: BucketName;
+
   /**
    * DuckDB 関連のオプションです。
    */
   duckdb: DuckdbOptions;
+
   /**
    * JavaScript の値と JSON 文字列を相互変換するための関数群です。
    *
    * @default JSON
    */
   json: Json | undefined;
+
   /**
    * ファイルの説明文の最大サイズ (バイト数) です。
    *
    * @default 100 KiB
    */
   maxDescriptionSize: v.InferOutput<typeof schemas.HalfUnsignedInteger> | undefined;
+
   /**
-   * ファイルのメタデータのの最大サイズ (バイト数) です。
+   * ファイルのメタデータの最大サイズ (バイト数) です。
    * このサイズは、メタデータを `json.stringify` で変換したあとの文字列に対して計算されます。
    *
    * @default 100 KiB
    */
   maxMetadataJsonSize: v.InferOutput<typeof schemas.UnsignedInteger> | undefined;
+
   /**
    * ファイルの説明文を全文検索用の文字列に変換する関数です。
    *
@@ -149,28 +157,34 @@ type CreateInput = Readonly<{
    * バケット内のファイルパスです。
    */
   filePath: Path;
+
   /**
    * 実際に保存されるファイルの識別子です。
    */
   entityId: v.InferOutput<typeof schemas.EntityId>;
+
   /**
    * ファイルのチェックサム (MD5 ハッシュ値) です。
    */
   checksum: v.InferOutput<typeof schemas.Checksum>;
+
   /**
    * ファイル形式です。`undefined` の場合はファイルパスから自動判定されます。
    */
   mimeType: v.InferOutput<typeof schemas.MimeType> | undefined;
+
   /**
    * ファイルサイズ (バイト数) です。
    */
   fileSize: v.InferOutput<typeof schemas.UnsignedInteger>;
+
   /**
    * ファイルの説明文です。
    *
    * @default null
    */
   description: string | null | undefined;
+
   /**
    * ファイルのメタデータです。
    *
@@ -197,18 +211,22 @@ type ReadOutput = {
    * 実際に保存されるファイルの識別子です。
    */
   entityId: v.InferOutput<typeof schemas.EntityId>;
+
   /**
    * ファイルのチェックサム (MD5 ハッシュ値) です。
    */
   checksum: v.InferOutput<typeof schemas.Checksum>;
+
   /**
    * ファイル形式です。
    */
   mimeType: v.InferOutput<typeof schemas.MimeType>;
+
   /**
    * ファイルサイズ (バイト数) です。
    */
   fileSize: v.InferOutput<typeof schemas.UnsignedInteger>;
+
   /**
    * 最終更新日 (ミリ秒) です。
    */
@@ -283,6 +301,7 @@ type MoveInput = Readonly<{
    * バケット内の移動元のファイルパスです。
    */
   srcFilePath: Path;
+
   /**
    * バケット内の移動先のファイルパスです。
    */
@@ -297,10 +316,12 @@ type CopyInput = Readonly<{
    * バケット内のコピー元のファイルパスです。
    */
   srcFilePath: Path;
+
   /**
    * バケット内のコピー先のファイルパスです。
    */
   dstFilePath: Path;
+
   /**
    * 実際に保存されているファイルの識別子です。
    */
@@ -315,30 +336,37 @@ type UpdateInput = Readonly<{
    * バケット内のファイルパスです。
    */
   filePath: Path;
+
   /**
-   * 実際に保存されているファイルの識別子です。
+   * 新しいファイルの識別子です。
    */
   newEntityId: v.InferOutput<typeof schemas.EntityId> | undefined;
+
   /**
-   * 実際に保存されていたファイルの識別子です。
+   * 古いファイルの識別子です。
    */
   oldEntityId: v.InferOutput<typeof schemas.EntityId> | undefined;
+
   /**
-   * ファイルのチェックサム (MD5 ハッシュ値)
+   * ファイルのチェックサム (MD5 ハッシュ値) です。
    */
   checksum: v.InferOutput<typeof schemas.Checksum> | undefined;
+
   /**
    * ファイル形式です。
    */
   mimeType: v.InferOutput<typeof schemas.MimeType> | undefined;
+
   /**
    * ファイルサイズ (バイト数) です。
    */
   fileSize: v.InferOutput<typeof schemas.UnsignedInteger> | undefined;
+
   /**
    * ファイルの説明文です。
    */
   description: string | null | undefined;
+
   /**
    * ファイルのメタデータです。
    */
@@ -361,7 +389,7 @@ type DeleteInput = Readonly<{
 type ExistsInput = Readonly<
   {
     /**
-     * バケット内のディレクトリパスです。
+     * バケット内のディレクトリーパスです。
      */
     dirPath: readonly string[];
   } | {
@@ -383,7 +411,7 @@ type ExistsOutput = {
 };
 
 /**
- * ファイルやディレクトリのステータス情報を取得するための入力パラメーターです。
+ * ファイルやディレクトリーのステータス情報を取得するための入力パラメーターです。
  */
 type StatInput = Readonly<{
   /**
@@ -393,15 +421,16 @@ type StatInput = Readonly<{
 }>;
 
 /**
- * ファイルやディレクトリのステータス情報を取得した結果です。
+ * ファイルやディレクトリーのステータス情報を取得した結果です。
  */
 type StatOutput = {
   /**
    * `true` なら指定したパスはファイルです。
    */
   isFile: boolean;
+
   /**
-   * `true` なら指定したパスはディレクトリです。
+   * `true` なら指定したパスはディレクトリーです。
    */
   isDirectory: boolean;
 };
@@ -411,25 +440,29 @@ type StatOutput = {
  */
 type SearchInput = Readonly<{
   /**
-   * ディレクトリパスです。
+   * ディレクトリーパスです。
    */
   dirPath: readonly string[];
+
   /**
    * 検索クエリーです。
    */
   query: string;
+
   /**
    * 検索結果の最大数です。
    *
    * @default 上限なし
    */
   limit: v.InferOutput<typeof schemas.UnsignedInteger> | undefined;
+
   /**
-   * ディレクトリ内のファイルを再帰的に検索するなら `true`、しないなら `false` を指定します。
+   * ディレクトリー内のファイルを再帰的に検索するなら `true`、しないなら `false` を指定します。
    *
    * @default false
    */
   recursive: boolean | undefined;
+
   /**
    * 検索にヒットしたと判断するスコアのしきい値です。
    *
@@ -446,10 +479,12 @@ type SearchOutput = {
    * バケット内のファイルパスです。
    */
   filePath: Path;
+
   /**
    * ファイルの説明文です。
    */
   description: string;
+
   /**
    * 検索スコアです。
    */
@@ -457,25 +492,28 @@ type SearchOutput = {
 };
 
 /**
- * ディレクトリまたはファイルをリストアップするための入力パラメーターです。
+ * ディレクトリーまたはファイルをリストアップするための入力パラメーターです。
  */
 type ListInput = Readonly<{
   /**
-   * ディレクトリパスです。
+   * ディレクトリーパスです。
    */
   dirPath: readonly string[];
+
   /**
    * 検索結果の最大数です。
    *
    * @default 上限なし
    */
   limit: v.InferOutput<typeof schemas.UnsignedInteger> | undefined;
+
   /**
    * 検索結果の開始位置です。
    *
    * @default 0
    */
   offset: v.InferOutput<typeof schemas.UnsignedInteger> | undefined;
+
   /**
    * ファイル名の並び順です。
    *
@@ -485,13 +523,14 @@ type ListInput = Readonly<{
 }>;
 
 /**
- * ディレクトリまたはファイルをリストアップした結果です。
+ * ディレクトリーまたはファイルをリストアップした結果です。
  */
 type ListOutput = {
   /**
    * `true` ならファイルです。
    */
   isFile: boolean;
+
   /**
    * リストアイテムの名前です。
    */
@@ -503,49 +542,52 @@ type ListOutput = {
  */
 export default class Catalogdb {
   /**
-   * ログを記録する関数群
+   * ログを記録する関数群です。
    */
   #logger: ConsoleLikeLogger;
+
   /**
-   * バケット名
+   * バケット名です。
    */
   readonly #bucketName: v.InferOutput<typeof schemas.BucketName>;
+
   /**
-   * DuckDB の各種モジュールの情報
+   * DuckDB の各種モジュールの情報です。
    */
   readonly #duckdbOpts: Readonly<{
     /**
-     * DuckDB の各種モジュールの情報
+     * DuckDB の各種モジュールの情報です。
      */
     bundle: DuckdbBundle;
+
     /**
-     * DuckDB のロガー
+     * DuckDB のロガーです。
      */
     logger: DuckdbLogger;
   }>;
+
   /**
-   * ファイルの説明文を全文検索用の文字列に変換する。
-   * 全文検索用の文字列のサイズの上限は `maxDescriptionSize` の 2 倍。
-   *
-   * @param descRaw ファイルの説明文
-   * @returns 全文検索用の文字列
+   * ファイルの説明文を全文検索用の文字列に変換する関数です。
    */
   readonly #toFtsStr: (descRaw: string) => Promise<string>;
+
   /**
-   * JavaScript の値と JSON 文字列を相互変換するためのユーティリティ
+   * JavaScript の値と JSON 文字列を相互変換するためのユーティリティーです。
    */
   readonly #metaJson: Json;
+
   /**
-   * DuckDB
+   * DuckDB のインスタンスです。
    */
   #db: AsyncDuckDB | null;
+
   /**
-   * DuckDB のコネクション
+   * DuckDB のコネクションです。
    */
   #conn: AsyncDuckDBConnection | null;
 
   /**
-   * Catalogdb を構築します。
+   * `Catalogdb` の新しいインスタンスを構築します。
    *
    * @param inp 初期化するための入力パラメーターです。
    */
@@ -561,7 +603,7 @@ export default class Catalogdb {
       toFullTextSearchString = (desc: string) => desc,
     } = inp;
     const descRawSchema = schemas.newSizeLimitedString(maxDescriptionSize);
-    // 全文検索用の文字列のサイズの上限は `maxDescriptionSize` の 2 倍までとしておく。
+    // 全文検索用の文字列のサイズの上限は `maxDescriptionSize` の 2 倍までとしておきます。
     const maxFtsStrSize = v.parse(schemas.UnsignedInteger, maxDescriptionSize * 2);
     const ftsStrSchema = schemas.newSizeLimitedString(maxFtsStrSize);
     const metaJsSchema = schemas.newSizeLimitedString(maxMetadataJsonSize);
@@ -591,10 +633,10 @@ export default class Catalogdb {
   }
 
   /**
-   * クエリーを実行
+   * SQL クエリーを実行し、結果を返します。
    *
-   * @param sql SQL
-   * @returns 結果
+   * @param sql 実行する SQL クエリーです。
+   * @returns クエリーの実行結果を Apache Arrow の `Table` 形式で返します。
    */
   async #query(sql: string | Sql): Promise<Table> {
     if (!this.#conn) {
@@ -619,7 +661,7 @@ export default class Catalogdb {
   }
 
   /**
-   * ファイルに変更内容を反映
+   * DuckDB の変更内容をファイルに同期します。
    */
   async #flush(): Promise<void> {
     try {
@@ -630,12 +672,12 @@ export default class Catalogdb {
   }
 
   /**
-   * データベースに接続します。
+   * DuckDB データベースに接続します。
    */
   @mutex
   public async connect(): Promise<void> {
     if (!this.#db) {
-      // ディレクトリの準備
+      // ディレクトリーの準備
       {
         const fs = await window.navigator.storage.getDirectory();
         const opfs = await fs.getDirectoryHandle("managed-opfs", { create: true });
@@ -765,6 +807,7 @@ export default class Catalogdb {
    *
    * @param inp ファイルの付帯情報を取得するための入力パラメーターです。
    * @returns ファイルの付帯情報を取得した結果です。
+   * @throws ファイルが見つからない場合は `MopfsFileNotFoundError` を投げます。
    */
   @mutex.readonly
   public async read(inp: ReadInput): Promise<ReadOutput> {
@@ -810,10 +853,11 @@ export default class Catalogdb {
   }
 
   /**
-   * 際に保存されているファイルの識別子を取得します。
+   * 実際に保存されているファイルの識別子を取得します。
    *
    * @param inp 実際に保存されているファイルの識別子を取得するための入力パラメーターです。
    * @returns 実際に保存されているファイルの識別子の取得した結果です。
+   * @throws ファイルが見つからない場合は `MopfsFileNotFoundError` を投げます。
    */
   @mutex.readonly
   public async readEntityId(inp: ReadEntityIdInput): Promise<ReadEntityIdOutput> {
@@ -843,6 +887,7 @@ export default class Catalogdb {
    *
    * @param inp ファイルの説明文を取得するための入力パラメーターです。
    * @returns ファイルの説明文を取得した結果です。
+   * @throws ファイルが見つからない場合は `MopfsFileNotFoundError` を投げます。
    */
   @mutex.readonly
   public async readDescription(inp: ReadDescriptionInput): Promise<ReadDescriptionOutput> {
@@ -872,6 +917,7 @@ export default class Catalogdb {
    *
    * @param inp ファイルのメタデータを取得するための入力パラメーターです。
    * @returns ファイルのメタデータを取得した結果です。
+   * @throws ファイルが見つからない場合は `MopfsFileNotFoundError` を投げます。
    */
   @mutex.readonly
   public async readMetadata(inp: ReadMetadataInput): Promise<ReadMetadataOutput> {
@@ -905,6 +951,7 @@ export default class Catalogdb {
    * ファイルの付帯情報を移動します。
    *
    * @param inp ファイルの付帯情報を移動するための入力パラメーターです。
+   * @throws 移動元ファイルが見つからない場合は `MopfsFileNotFoundError` を、移動先ファイルがすでに存在する場合は `MopfsFileExistsError` を投げます。
    */
   @mutex
   public async move(inp: MoveInput): Promise<void> {
@@ -948,6 +995,7 @@ export default class Catalogdb {
    * ファイルの付帯情報をコピーします。
    *
    * @param inp ファイルの付帯情報をコピーするための入力パラメーターです。
+   * @throws コピー元ファイルが見つからない場合は `MopfsFileNotFoundError` を、コピー先ファイルがすでに存在する場合は `MopfsFileExistsError` を投げます。
    */
   @mutex
   public async copy(inp: CopyInput): Promise<void> {
@@ -1012,6 +1060,7 @@ export default class Catalogdb {
    * ファイルの付帯情報を更新します。
    *
    * @param inp ファイルの付帯情報を更新するための入力パラメーターです。
+   * @throws ファイルが見つからない場合は `MopfsFileNotFoundError` を投げます。
    */
   @mutex
   public async update(inp: UpdateInput): Promise<void> {
@@ -1126,6 +1175,7 @@ export default class Catalogdb {
    * ファイルの付帯情報を削除します。
    *
    * @param inp ファイルの付帯情報を削除するための入力パラメーターです。
+   * @throws ファイルが見つからない場合は `MopfsFileNotFoundError` を投げます。
    */
   @mutex
   public async delete(inp: DeleteInput): Promise<void> {
@@ -1200,10 +1250,10 @@ export default class Catalogdb {
   }
 
   /**
-   * ファイルやディレクトリのステータス情報を取得します。
+   * ファイルやディレクトリーのステータス情報を取得します。
    *
-   * @param inp ファイルやディレクトリのステータス情報を取得するための入力パラメーターです。
-   * @returns ファイルやディレクトリのステータス情報を取得した結果です。
+   * @param inp ファイルやディレクトリーのステータス情報を取得するための入力パラメーターです。
+   * @returns ファイルやディレクトリーのステータス情報を取得した結果です。
    */
   @mutex.readonly
   public async stat(inp: StatInput): Promise<StatOutput> {
@@ -1259,7 +1309,7 @@ export default class Catalogdb {
    * ファイルの説明文を対象に全文検索します。
    *
    * @param inp ファイルの説明文を対象に全文検索するための入力パラメーターです。
-   * @returns 検索結果
+   * @returns 検索結果です。
    */
   @mutex // インデックスを作成するために .readonly はつけられない。
   public async search(inp: SearchInput): Promise<SearchOutput[]> {
@@ -1270,7 +1320,8 @@ export default class Catalogdb {
       recursive = false,
       scoreThreshold = 0,
     } = inp;
-    // 検索前にインデックスを更新する。
+    // 検索前にインデックスを更新します。
+    // ドキュメント:
     // https://duckdb.org/docs/stable/core_extensions/full_text_search.html#pragma-create_fts_index
     await this.#query(sql`
       PRAGMA create_fts_index(
@@ -1333,9 +1384,9 @@ export default class Catalogdb {
   }
 
   /**
-   * ディレクトリまたはファイルをリストアップします。
+   * ディレクトリーまたはファイルをリストアップします。
    *
-   * @param inp ディレクトリまたはファイルをリストアップするための入力パラメーターです。
+   * @param inp ディレクトリーまたはファイルをリストアップするための入力パラメーターです。
    * @returns リストアップした結果です。
    */
   @mutex.readonly
@@ -1367,7 +1418,7 @@ export default class Catalogdb {
       ORDER BY
         is_file ASC,
         name ${raw(orderByName)}`);
-    // ページネーションを適用する。
+    // ページネーションを適用します。
     if (limit !== undefined && limit > 0) {
       stmt.push(sql`
       LIMIT

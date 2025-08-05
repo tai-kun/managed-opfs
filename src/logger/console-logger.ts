@@ -1,23 +1,31 @@
 import { type LogEntry, type Logger, LogLevel } from "./logger-types.js";
 
 /**
- * ログを標準出力/標準エラーに記録するロガーです。
+ * ログを標準出力や標準エラーに記録するロガーです。
+ * `Logger` インターフェースを実装しています。
  */
 export default class ConsoleLogger implements Logger {
   /**
-   * ログレベルです。
+   * このロガーが記録するログレベルのしきい値です。
+   * 指定されたレベル以上のログのみが記録されます。
    */
   public readonly level: LogLevel;
 
   /**
-   * 記録するログレベルのしきい値です。
+   * `ConsoleLogger` の新しいインスタンスを構築します。
    *
-   * @param level ログレベルです。
+   * @param level 記録するログレベルのしきい値です。指定されない場合は `LogLevel.DEBUG` が使用されます。
    */
   constructor(level: LogLevel | undefined = LogLevel.DEBUG) {
     this.level = level;
   }
 
+  /**
+   * ログを記録します。
+   * `entry.level` がこのロガーの `level` 以上の場合にのみ、メッセージを `console` に出力します。
+   *
+   * @param entry ログの内容です。
+   */
   log(entry: LogEntry): void {
     if (entry.level < this.level) {
       return;

@@ -10,11 +10,11 @@ const VALID_BUCKET_NAME_REGEX = /^[a-z0-9][a-z0-9\-]{1,61}[a-z0-9]$/;
 const VALID_BUCKET_NAME_REGEX_DOT = /^[a-z0-9][a-z0-9\.\-]{1,61}[a-z0-9]$/;
 
 /**
- * バケット名の解析オプション
+ * バケット名の解析オプションです。
  */
 export type BucketNameOptions = Readonly<{
   /**
-   * バケット名にドット (.) を利用できようにするかどうかを指定します。
+   * バケット名にドット (.) を利用できるようにするかどうかを指定します。
    *
    * @default false
    */
@@ -35,8 +35,10 @@ const BucketName = {
   /**
    * バケット名を解析します。
    *
+   * この関数は、検証が失敗した場合にエラーを投げます。
+   *
    * @template TBucketName バケット名の型です。
-   * @param bucketName バケット名です。
+   * @param bucketName 検証するバケット名です。
    * @param options 解析オプションです。
    * @returns 検証されたバケット名です。
    */
@@ -46,11 +48,12 @@ const BucketName = {
   ): BucketName<TBucketName> {
     return BucketName.safeParse(bucketName, options).unwrap();
   },
+
   /**
    * バケット名が解析可能かどうか検証します。
    *
    * @template TBucketName バケット名の型です。
-   * @param bucketName バケット名です。
+   * @param bucketName 検証するバケット名です。
    * @param options 解析オプションです。
    * @returns 解析できるなら `true`、そうでないなら `false` です。
    */
@@ -60,13 +63,14 @@ const BucketName = {
   ): bucketName is BucketName<TBucketName> {
     return BucketName.safeParse(bucketName, options).ok;
   },
+
   /**
-   * バケット名を解析します。
+   * バケット名を解析し、成功または失敗の結果を返します。
    *
    * @template TBucketName バケット名の型です。
-   * @param bucketName バケット名です。
+   * @param bucketName 検証するバケット名です。
    * @param options 解析オプションです。
-   * @returns 検証されたバケット名です。
+   * @returns 検証されたバケット名を含む成功オブジェクト、または失敗オブジェクトを返します。
    */
   safeParse<const TBucketName extends string>(
     bucketName: TBucketName,
@@ -118,13 +122,14 @@ const BucketName = {
 
     return Result.ok(bucketName as BucketName<TBucketName>);
   },
+
   /**
-   * バケット名が有効化どうか検証します。
+   * バケット名が有効かどうかを検証します。
    *
    * @template TBucketName バケット名の型です。
-   * @param bucketName バケット名です。
+   * @param bucketName 検証するバケット名です。
    * @param options 解析オプションです。
-   * @returns 有効なら `true`、そうでないなら `false` です。
+   * @returns 有効なバケット名なら `true`、そうでないなら `false` です。
    */
   validate<const TBucketName extends string>(
     bucketName: TBucketName,
@@ -134,11 +139,12 @@ const BucketName = {
 
     return result.ok && result.value === bucketName;
   },
+
   /**
-   * バケット名が有効化どうか検証します。
+   * バケット名が有効かどうかを検証し、結果を返します。
    *
    * @template TBucketName バケット名の型です。
-   * @param bucketName バケット名です。
+   * @param bucketName 検証するバケット名です。
    * @param options 解析オプションです。
    * @returns 検証結果です。
    */

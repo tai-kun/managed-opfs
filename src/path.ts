@@ -2,19 +2,24 @@ import { MopfsError } from "./error/errors.js";
 import Result from "./result.js";
 import utf8 from "./utf8.js";
 
-const DOT = 46; // "." の UTF-8 コードポイント
-const SLASH = 47; // "/" の UTF-8 コードポイント
+const DOT = 46; // "." の UTF-8 コードポイントです。
+const SLASH = 47; // "/" の UTF-8 コードポイントです。
+
+/**
+ * `Path` クラスの内部使用を制御するフラグです。
+ * `true` の場合、コンストラクターが `Uint8Array` を直接受け取ります。
+ */
 let internalUse = false;
 
 /**
- * ファイルパス
+ * ファイルパスを表すクラスです。
  */
 export default class Path {
   /**
    * ファイルパスを解析します。
    *
-   * @param path ファイルパス
-   * @returns 解析結果
+   * @param path 解析するファイルパスです。
+   * @returns 解析された `Path` オブジェクトです。
    */
   public static parse(path: string): Path {
     return new Path(path);
@@ -23,18 +28,18 @@ export default class Path {
   /**
    * ファイルパスが解析可能かどうか検証します。
    *
-   * @param path ファイルパス
-   * @returns 解析できるなら `true`、そうでないなら `false`
+   * @param path 検証するファイルパスです。
+   * @returns 解析できるなら `true`、そうでないなら `false` です。
    */
   public static canParse(path: string): boolean {
     return encodePath(path).ok;
   }
 
   /**
-   * ファイルパスを解析します。
+   * ファイルパスを解析し、成功または失敗の結果を返します。
    *
-   * @param path ファイルパス
-   * @returns 解析結果
+   * @param path 解析するファイルパスです。
+   * @returns 解析された `Path` オブジェクトを含む成功オブジェクト、または失敗オブジェクトを返します。
    */
   public static safeParse(path: string): Result<Path> {
     const result = encodePath(path);
@@ -54,8 +59,8 @@ export default class Path {
   /**
    * ファイルパスが有効かどうか検証します。
    *
-   * @param path ファイルパス
-   * @returns 有効なら `true`、そうでないなら `false`
+   * @param path 検証するファイルパスです。
+   * @returns 有効なファイルパスなら `true`、そうでないなら `false` です。
    */
   public static validate(path: string): boolean {
     const result = Path.safeParse(path);
@@ -63,10 +68,10 @@ export default class Path {
   }
 
   /**
-   * ファイルパスが有効かどうか検証します。
+   * ファイルパスが有効かどうか検証し、結果を返します。
    *
-   * @param path ファイルパス
-   * @returns 検証結果
+   * @param path 検証するファイルパスです。
+   * @returns 検証結果です。
    */
   public static safeValidate(path: string): Result<Path> {
     const result = Path.safeParse(path);
@@ -76,25 +81,49 @@ export default class Path {
   }
 
   /**
-   * ファイルパスのバイト列
+   * ファイルパスの UTF-8 バイト列です。
    */
   readonly #pathBuff: Uint8Array;
+
   /**
-   * ファイルパスの文字列表現
+   * ファイルパスの完全な文字列表現です。
    */
   readonly #fullpath: string;
-  // 以下キャッシュ
+
+  /**
+   * パスセグメントの配列です。
+   */
   #segments?: readonly string[];
+
+  /**
+   * ディレクトリー名です。
+   */
   #dirname?: string;
+
+  /**
+   * ベースネームの UTF-8 バイト列です。
+   */
   #basenameBuff?: Uint8Array | null;
+
+  /**
+   * ベースネームです。
+   */
   #basename?: string;
+
+  /**
+   * 拡張子なしのファイル名です。
+   */
   #filename?: string;
+
+  /**
+   * 拡張子です。
+   */
   #extname?: string;
 
   /**
-   * `Path` を構築します。
+   * `Path` の新しいインスタンスを構築します。
    *
-   * @param path ファイルパス
+   * @param path ファイルパスの文字列表現、または `Uint8Array` です。
    */
   public constructor(path: string) {
     if (internalUse) {
@@ -113,14 +142,15 @@ export default class Path {
   }
 
   /**
-   * 完全なファイルパス
+   * ファイルの完全なパスを取得します。
    */
   public get fullpath(): string {
     return this.#fullpath;
   }
 
   /**
-   * ファイルパスのセグメントです。1 つ以上のセグメントを持ちます。一番最後のセグメントは `.basename` と同じです。
+   * ファイルパスのセグメントの配列を取得します。
+   * 一番最後のセグメントは `basename` と同じです。
    */
   public get segments(): [...string[], string] {
     if (this.#segments === undefined) {
@@ -144,14 +174,14 @@ export default class Path {
   }
 
   /**
-   * ディレクトリパスです。
+   * ディレクトリーのパスを取得します。
    */
   public get dirname(): string {
     return this.#dirname ??= this.segments.slice(0, -1).join("/");
   }
 
   /**
-   * 拡張子付きのファイル名です。
+   * 拡張子付きのファイル名を取得します。
    *
    * @example "file.txt"
    */
@@ -165,7 +195,7 @@ export default class Path {
   }
 
   /**
-   * 拡張子を除くファイル名です。
+   * 拡張子を除いたファイル名を取得します。
    */
   public get filename(): string {
     if (this.#filename === undefined) {
@@ -190,7 +220,7 @@ export default class Path {
   }
 
   /**
-   * 拡張子です。ドット (.) から始まります。
+   * ファイルの拡張子を取得します。ドット (.) から始まります。
    *
    * @example ".txt"
    */
@@ -203,7 +233,7 @@ export default class Path {
   }
 
   /**
-   * JSON 形式に変換します。
+   * `JSON.stringify` で使用される、オブジェクトの文字列表現を返します。
    *
    * @returns パスの文字列表現です。
    */
@@ -212,7 +242,7 @@ export default class Path {
   }
 
   /**
-   * 文字列に変換します。
+   * オブジェクトの文字列表現を返します。
    *
    * @returns パスの文字列表現です。
    */
@@ -221,9 +251,9 @@ export default class Path {
   }
 
   /**
-   * 複製します。
+   * この `Path` オブジェクトの複製を作成します。
    *
-   * @returns 複製された新しい `Path` です。
+   * @returns 複製された新しい `Path` オブジェクトです。
    */
   public clone(): Path {
     try {
@@ -237,10 +267,10 @@ export default class Path {
 }
 
 /**
- * ファイルパスを検証しつつエンコードします。
+ * ファイルパスを検証し、UTF-8 バイト列にエンコードします。
  *
- * @param path ファイルパス
- * @returns エンコード結果
+ * @param path 検証およびエンコードするファイルパスです。
+ * @returns エンコードされた `Uint8Array` を含む成功オブジェクト、または失敗オブジェクトを返します。
  */
 function encodePath(path: string): Result<Uint8Array> {
   if (typeof path !== "string") {

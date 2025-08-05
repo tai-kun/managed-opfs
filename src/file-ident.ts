@@ -6,30 +6,46 @@ import Path from "./path.js";
  */
 type FileIdentInput = Readonly<{
   /**
-   * バケット名です。
+   * ファイルが存在するバケットの名前です。
    */
   bucketName: BucketName;
+
   /**
-   * ファイルパスです。
+   * ファイルへのパスです。
    */
   filePath: Path;
 }>;
 
 /**
- * `FileIdent` はファイルの場所を示します。
+ * `FileIdent` の JSON シリアライズされた形式を表す型です。
+ */
+export type FileIdentJson = {
+  bucketName: BucketName;
+  filePath: Path;
+};
+
+/**
+ * `FileIdent` の文字列表現を表す型です。
+ * `bucketName:filePath` の形式です。
+ */
+export type FileIdentString = `${BucketName}:${string}`;
+
+/**
+ * `FileIdent` は、バケット名とファイルパスの組み合わせでファイルの場所を特定するクラスです。
  */
 export default class FileIdent {
   /**
-   * バケット名です。
+   * ファイルが存在するバケットの名前です。
    */
   public readonly bucketName: BucketName;
+
   /**
-   * ファイルパスです。
+   * ファイルへのパスです。
    */
   public readonly filePath: Path;
 
   /**
-   * FileIdent を構築します。
+   * `FileIdent` の新しいインスタンスを構築します。
    *
    * @param inp `FileIdent` を構築するための入力パラメーターです。
    */
@@ -39,26 +55,23 @@ export default class FileIdent {
   }
 
   /**
-   * `FileIdent` をJSON 形式に変換します。
+   * `JSON.stringify` で使用される、オブジェクトの文字列表現を返します。
    *
    * @returns JSON 形式の `FileIdent` です。
    */
-  public toJSON(): {
-    bucketName: BucketName;
-    filePath: Path;
-  } {
+  public toJSON(): FileIdentJson {
     return {
-      bucketName: this.bucketName,
       filePath: this.filePath,
+      bucketName: this.bucketName,
     };
   }
 
   /**
-   * `FileIdent` を文字列に変換します。
+   * オブジェクトの文字列表現を返します。
    *
-   * @returns `FileIdent` の文字列表現です。
+   * @returns `bucketName:filePath` の形式で、`FileIdent` の文字列表現を返します。
    */
-  public toString(): `${BucketName}:${string}` {
+  public toString(): FileIdentString {
     return `${this.bucketName}:${this.filePath.fullpath}`;
   }
 }

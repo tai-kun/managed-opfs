@@ -8,7 +8,8 @@ import * as schemas from "./schemas.js";
 import toUint8Array, { type Uint8ArraySource } from "./to-uint8-array.js";
 
 /**
- * `Catalogdb` のインターフェースです。
+ * ファイルに関する説明文とメタデータの操作を定義するインターフェースです。
+ * このインターフェースは、`File` クラスが依存するカタログデータベースの抽象化を提供します。
  */
 interface Catalog {
   /**
@@ -22,28 +23,34 @@ interface Catalog {
        * バケット内のファイルパスです。
        */
       filePath: Path;
+
       /**
        * 実際に保存されるファイルの識別子です。
        */
       entityId: v.InferOutput<typeof schemas.EntityId>;
+
       /**
        * ファイルのチェックサム (MD5 ハッシュ値) です。
        */
       checksum: v.InferOutput<typeof schemas.Checksum>;
+
       /**
        * ファイル形式です。`undefined` の場合はファイルパスから自動判定されます。
        */
       mimeType: v.InferOutput<typeof schemas.MimeType> | undefined;
+
       /**
        * ファイルサイズ (バイト数) です。
        */
       fileSize: v.InferOutput<typeof schemas.UnsignedInteger>;
+
       /**
        * ファイルの説明文です。
        *
        * @default null
        */
       description: string | null | undefined;
+
       /**
        * ファイルのメタデータです。
        *
@@ -59,7 +66,7 @@ interface Catalog {
  */
 interface Manager {
   /**
-   * `true` なら `ManagedOpfs` が利用可能です。
+   * `ManagedOpfs` が利用可能かどうかを返します。
    */
   get opened(): boolean;
 }
@@ -87,10 +94,12 @@ interface Writer {
    * @param chunk チャンクデータです。
    */
   write(chunk: Uint8Array): Promise<void>;
+
   /**
    * ストリームを終了します。
    */
   close(): Promise<void>;
+
   /**
    * ストリームを中断します。
    *
@@ -100,13 +109,13 @@ interface Writer {
 }
 
 /**
- * OPFS のディレクトリハンドラーのインターフェースです。
+ * OPFS のディレクトリーハンドラーのインターフェースです。
  */
 interface MainDirHandle {
   /**
-   * ディレクトリ直下から指定のアイテムを削除します。
+   * ディレクトリー直下から指定のアイテムを削除します。
    *
-   * @param name 削除するアイテムです。
+   * @param name 削除するアイテムの名前です。
    */
   removeEntry(name: string): Promise<void>;
 }
@@ -119,46 +128,57 @@ type WritableFileStreamInput = Readonly<{
    * カタログデータベースです。
    */
   catalog: Catalog;
+
   /**
    * `ManagedOpfs` です。
    */
   manager: Manager;
+
   /**
    * ログを記録する関数群です。
    */
   logger: Logger;
+
   /**
-   * 書き込み先のディレクトリハンドラーです。
+   * 書き込み先のディレクトリーハンドラーです。
    */
   mainDir: MainDirHandle;
+
   /**
    * 実際に保存されるファイルの識別子です。
    */
   entityId: v.InferOutput<typeof schemas.EntityId>;
+
   /**
    * ファイルの書き込みストリームです。
    */
   writer: Writer;
+
   /**
    * ハッシュ値を計算するためのストリームです。
    */
   hash: Hash;
+
   /**
    * バケット名です。
    */
   bucketName: v.InferOutput<typeof schemas.BucketName>;
+
   /**
    * バケット内のファイルパスです。
    */
   filePath: Path;
+
   /**
    * ファイル形式です。
    */
   mimeType: v.InferOutput<typeof schemas.MimeType>;
+
   /**
    * ファイルの説明文です。
    */
   description: string | null;
+
   /**
    * ファイルのメタデータです。
    */
@@ -173,88 +193,109 @@ export type WritableFileStreamJson = {
    * バケット名です。
    */
   bucketName: v.InferOutput<typeof schemas.BucketName>;
+
   /**
    * バケット内のファイルパスです。
    */
   filePath: Path;
+
   /**
    * ファイルサイズ (バイト数) です。
    */
   fileSize: v.InferOutput<typeof schemas.UnsignedInteger>;
+
   /**
    * ファイル形式です。
    */
   fileType: v.InferOutput<typeof schemas.MimeType>;
+
   /**
    * ファイルの説明文です。
    */
   fileDescription: string | null;
+
   /**
    * ファイルのメタデータです。
    */
   fileMetadata: unknown;
 };
 
+/**
+ * ファイルにデータを書き込むためのストリームクラスです。
+ */
 export default class WritableFileStream {
   /**
-   * カタログデータベース
+   * カタログデータベースです。
    */
   #catalog: Catalog;
+
   /**
-   * `ManagedOpfs`
+   * `ManagedOpfs` のインスタンスです。
    */
   #manager: Manager;
+
   /**
-   * ログを記録する関数群
+   * ログを記録する関数群です。
    */
   #logger: Logger;
+
   /**
-   * 書き込み先のディレクトリハンドラー
+   * 書き込み先のディレクトリーハンドラーです。
    */
   #mainDir: MainDirHandle;
+
   /**
-   * 実際に保存されるファイルの識別子
+   * 実際に保存されるファイルの識別子です。
    */
   #entityId: v.InferOutput<typeof schemas.EntityId>;
+
   /**
-   * ファイルの書き込みストリーム
+   * ファイルの書き込みストリームです。
    */
   #writer: Writer;
+
   /**
-   * ハッシュ値を計算するためのストリーム
+   * ハッシュ値を計算するためのストリームです。
    */
   #hash: Hash;
+
   /**
-   * ファイルサイズ
+   * ファイルサイズです。
    */
   #size: v.InferOutput<typeof schemas.UnsignedInteger>;
+
   /**
-   * ファイル形式
+   * ファイル形式です。
    */
   #type: v.InferOutput<typeof schemas.MimeType>;
+
   /**
-   * ストリームが閉じているかどうか
+   * ストリームが閉じているかどうかを示します。
    */
   #closed: boolean;
+
   /**
-   * バケット名です。
+   * このストリームが属するバケット名です。
    */
   public readonly bucketName: v.InferOutput<typeof schemas.BucketName>;
+
   /**
-   * バケット内のファイルパスです。
+   * このストリームが書き込む先のバケット内のファイルパスです。
    */
   public readonly filePath: Path;
+
   /**
    * ファイルの説明文です。
    */
   public fileDescription: string | null;
+
   /**
    * ファイルのメタデータです。
    */
   public fileMetadata: unknown;
 
   /**
-   * `WritableFileStream` を構築します。
+   * `WritableFileStream` の新しいインスタンスを構築します。
    *
    * @param inp `WritableFileStream` を構築するための入力パラメーターです。
    */
@@ -276,21 +317,23 @@ export default class WritableFileStream {
   }
 
   /**
-   * ファイルサイズです。
+   * 書き込まれたファイルのサイズ (バイト数) を取得します。
    */
   get fileSize(): v.InferOutput<typeof schemas.UnsignedInteger> {
     return this.#size;
   }
 
   /**
-   * ファイル形式です。
+   * 書き込まれたファイルの形式 (MIME タイプ) を取得します。
    */
   get fileType(): v.InferOutput<typeof schemas.MimeType> {
     return this.#type;
   }
 
   /**
-   * ファイル形式です。
+   * 書き込まれたファイルの形式 (MIME タイプ) を設定します。
+   *
+   * @param value 設定する MIME タイプです。
    */
   set fileType(value: string) {
     this.#type = v.parse(schemas.MimeType, value);
@@ -299,7 +342,8 @@ export default class WritableFileStream {
   /**
    * ストリームにチャンクデータを書き込みます。
    *
-   * @param chunk `Uint8Array` になれるチャンクデータです。
+   * @param chunk `Uint8Array` に変換できるチャンクデータです。
+   * @throws `ManagedOpfs` が開かれていない場合は、エラーを投げます。
    */
   @mutex
   public async write(chunk: Uint8ArraySource): Promise<void> {
@@ -313,7 +357,7 @@ export default class WritableFileStream {
         this.#logger.error("WritableFileStream.write: Failed to abort WritableFileStream", ex);
       }
 
-      // 書き込みを中断したので、新しいエンティティを破棄します。
+      // 書き込みを中断したので、新しいエンティティーを破棄します。
       try {
         await this.#mainDir.removeEntry(this.#entityId);
       } catch (ex) {
@@ -338,7 +382,9 @@ export default class WritableFileStream {
   }
 
   /**
-   * ストリームを終了します。
+   * ストリームを終了します。これにより、ファイルデータと付帯情報が永続化されます。
+   *
+   * @throws `ManagedOpfs` が開かれていない場合やストリームがすでに閉じられている場合は、エラーを投げます。
    */
   @mutex
   public async close(): Promise<void> {
@@ -352,7 +398,7 @@ export default class WritableFileStream {
         this.#logger.error("WritableFileStream.close: Failed to abort WritableFileStream", ex);
       }
 
-      // 書き込みを中断したので、新しいエンティティを破棄します。
+      // 書き込みを中断したので、新しいエンティティーを破棄します。
       try {
         await this.#mainDir.removeEntry(this.#entityId);
       } catch (ex) {
@@ -366,7 +412,7 @@ export default class WritableFileStream {
     }
 
     if (this.#closed) {
-      // 後ろの処理でエラーを投げるとエンティティが削除されてしまうため、
+      // 後ろの処理でエラーを投げるとエンティティーが削除されてしまうため、
       // すでにストリームが閉じられている場合はここでエラーを投げます。
       throw new MopfsError("Failed to close WritableFileStream: stream closed");
     }
@@ -383,7 +429,7 @@ export default class WritableFileStream {
         description: this.fileDescription,
       });
     } catch (ex) {
-      // 書き込みに失敗したので、新しいエンティティを破棄します。
+      // 書き込みに失敗したので、新しいエンティティーを破棄します。
       try {
         await this.#mainDir.removeEntry(this.#entityId);
       } catch (ex) {
@@ -403,11 +449,12 @@ export default class WritableFileStream {
    * ストリームを中断します。
    *
    * @param reason 中断の理由です。
+   * @throws ストリームがすでに閉じられている場合は、エラーを投げます。
    */
   @mutex
   public async abort(reason?: unknown): Promise<void> {
     if (this.#closed) {
-      // 後ろの処理でエラーを投げるとエンティティが削除されてしまうため、
+      // 後ろの処理でエラーを投げるとエンティティーが削除されてしまうため、
       // すでにストリームが閉じられている場合はここでエラーを投げます。
       throw new MopfsError("Failed to abort WritableFileStream: stream closed");
     }
@@ -416,7 +463,7 @@ export default class WritableFileStream {
       await this.#writer.abort(reason);
     } finally {
       this.#closed = true;
-      // 書き込みを中断したので、新しいエンティティを破棄します。
+      // 書き込みを中断したので、新しいエンティティーを破棄します。
       try {
         await this.#mainDir.removeEntry(this.#entityId);
       } catch (ex) {
@@ -429,9 +476,9 @@ export default class WritableFileStream {
   }
 
   /**
-   * `WritableFileStream` を JSON 形式にします。これは主にテスト/プリントデバッグ用です。
+   * `WritableFileStream` を JSON 形式に変換します。これは主にテストやデバッグ目的で使用されます。
    *
-   * @returns JSON 形式の `WritableFileStream` です。
+   * @returns JSON 形式の `WritableFileStream` のデータです。
    */
   public toJSON(): WritableFileStreamJson {
     const json: WritableFileStreamJson = {
@@ -447,9 +494,9 @@ export default class WritableFileStream {
   }
 
   /**
-   * `WritableFileStream` を `FileIdent` に変換します。
+   * `WritableFileStream` の内容を `FileIdent` に変換します。
    *
-   * @returns `FileIdent` です。
+   * @returns `FileIdent` の新しいインスタンスです。
    */
   public toIdent(): FileIdent {
     return new FileIdent({

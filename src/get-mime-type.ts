@@ -6,8 +6,8 @@ import * as schemas from "./schemas.js";
  * ファイルパスから MIME タイプを取得します。
  *
  * @param path ファイルパスです。
- * @param defaultType デフォルトの MIME タイプです。
- * @returns MIME タイプです。
+ * @param defaultType MIME タイプが特定できない場合に返されるデフォルト値です。デフォルトは "application/octet-stream" です。
+ * @returns 取得した MIME タイプです。
  */
 export default function getMimeType(
   path: string,

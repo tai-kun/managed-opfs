@@ -1,15 +1,16 @@
+import { MopfsTypeError } from "./error/errors.js";
 import utf8 from "./utf8.js";
 
 /**
- * `Uint8Array` になれる値の型です。
+ * `Uint8Array` に変換可能な値の型です。
  */
 export type Uint8ArraySource = string | ArrayBuffer | ArrayBufferView;
 
 /**
- * `Uint8Array` に変換します。
+ * 与えられた値を `Uint8Array` に変換します。
  *
- * @param source `Uint8Array` になれる値
- * @returns `Uint8Array` に変換された値
+ * @param source `Uint8Array` に変換する値です。`string`、`ArrayBuffer`、または `ArrayBufferView` を受け入れます。
+ * @returns 変換された `Uint8Array` です。
  */
 export default function toUint8Array(source: Uint8ArraySource): Uint8Array {
   switch (true) {
@@ -26,19 +27,21 @@ export default function toUint8Array(source: Uint8ArraySource): Uint8Array {
       return new Uint8Array(source);
 
     default:
-      throw new Error("Source that cannot be Uint8Array", {
-        cause: source,
-      });
+      throw new MopfsTypeError("Uint8ArraySource", source);
   }
 }
 
+/**
+ * `Object.prototype.toString` メソッドを定数として保持しています。
+ * このメソッドは、オブジェクトのクラス名を文字列として取得するために使用されます。
+ */
 const toString = Object.prototype.toString;
 
 /**
- * 引数に与えられた値が `ArrayBuffer` オブジェクトどうかを判定します。
+ * 引数に与えられた値が `ArrayBuffer` オブジェクトかどうかを判定します。
  *
- * @param value `ArrayBuffer` オブジェクトを期待する値
- * @returns `value` が `ArrayBuffer` なら `true`、そうでなければ `false`
+ * @param value `ArrayBuffer` オブジェクトであるか検証する値です。
+ * @returns `value` が `ArrayBuffer` オブジェクトであれば `true`、そうでなければ `false` です。
  */
 function isArrayBuffer(value: unknown): value is ArrayBuffer {
   return (

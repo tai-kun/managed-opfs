@@ -3,36 +3,42 @@ import * as v from "valibot";
 import * as schemas from "./schemas.js";
 
 /**
- * ハッシュ値を計算するためのストリームです。
+ * ハッシュ値を計算するためのストリームインターフェースです。
  */
 export interface Hash {
   /**
    * ハッシュ値の計算に必要な内部データを更新します。
    *
-   * @param data バイト列です。
+   * @param data 追加するバイト列です。
    */
   update(data: Uint8Array): void;
+
   /**
-   * `.update()` で渡された全てのデータのダイジェストをハッシュして計算します。
+   * `.update()` で渡されたすべてのデータのダイジェストをハッシュして計算し、16 進数文字列を返します。
    *
-   * @returns 16 進数の文字列です。
+   * @returns 計算されたハッシュ値の 16 進数文字列です。
    */
   digest(): v.InferOutput<typeof schemas.Checksum>;
 }
 
+/**
+ * ハッシュ値の計算に関連するユーティリティーオブジェクトです。
+ */
 export default {
   /**
-   * 渡されたデータのダイジェストをハッシュして計算します。
+   * 渡されたデータの MD5 ダイジェストをハッシュして計算します。
    *
-   * @returns 16 進数の文字列です。
+   * @param data ハッシュ値を計算する対象のバイト列です。
+   * @returns 計算されたハッシュ値の 16 進数文字列です。
    */
   async digest(data: Uint8Array): Promise<v.InferOutput<typeof schemas.Checksum>> {
     return v.parse(schemas.Checksum, await md5(data));
   },
+
   /**
    * ハッシュ値を計算するためのストリームを作成します。
    *
-   * @returns ハッシュ値を計算するためのストリームです。
+   * @returns ハッシュ値を計算するための `Hash` インターフェースを実装したストリームです。
    */
   async create(): Promise<Hash> {
     const md5 = await createMD5();

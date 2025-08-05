@@ -1,31 +1,82 @@
 const QUEUE = Symbol.for("managed-opfs/mutex/QUEUE");
 
+/**
+ * 書き込み操作のキューアイテムを表す型です。
+ */
 type QueueItemW = {
+  /**
+   * キューの種類の識別子です。
+   */
   readonly kind: "W";
+
+  /**
+   * キュー内の次のアイテムの実行を開始する関数です。
+   */
   readonly start: () => void;
+
+  /**
+   * 実行準備ができたことを示すプロミスです。
+   */
   readonly ready: Promise<void>;
+
+  /**
+   * 順番に実行されるステップの配列です。
+   */
   steps: (() => void)[];
 };
 
+/**
+ * 読み取り操作のキューアイテムを表す型です。
+ */
 type QueueItemR = {
+  /**
+   * キューの種類の識別子です。
+   */
   readonly kind: "R";
+
+  /**
+   * キュー内の次のアイテムの実行を開始する関数です。
+   */
   readonly start: () => void;
+
+  /**
+   * 実行準備ができたことを示すプロミスです。
+   */
   readonly ready: Promise<void>;
+
+  /**
+   * 同時に実行されている読み取り操作の数です。
+   */
   count: number;
 };
 
+/**
+ * キューアイテムの型です。
+ */
 type QueueItem =
   | QueueItemW
   | QueueItemR;
 
+/**
+ * 非同期クラスメソッドの型です。
+ */
 interface AsyncClassMethod {
   (...args: any): PromiseLike<any>;
 }
 
+/**
+ * デコレートされたクラスメソッドの型です。
+ */
 interface MutexClassMethod<TFunction extends AsyncClassMethod> {
   (this: any, ...args: Parameters<TFunction>): Promise<Awaited<ReturnType<TFunction>>>;
 }
 
+/**
+ * Stage 3 のクラスメソッドデコレーターをサポートしているか検証します。
+ *
+ * @param context デコレーターのコンテキストです。
+ * @throws Stage 3 のデコレーターをサポートしていない場合にエラーを投げます。
+ */
 function assertStage3ClassMethodDecoratorSupport(
   context: unknown,
 ): asserts context is ClassMethodDecoratorContext {
@@ -39,6 +90,9 @@ function assertStage3ClassMethodDecoratorSupport(
   }
 }
 
+/**
+ * デコレートされたクラスのインスタンスに、キューを初期化します。
+ */
 function initializeInstance(this: any): void {
   if (!Array.isArray(this[QUEUE])) {
     Object.defineProperty(this, QUEUE, {
@@ -118,7 +172,7 @@ function mutex<TFunction extends AsyncClassMethod>(
 }
 
 /**
- * 1 つ以上のクラスメソッドを並行期処理するデコレーターです。`@mutex` と並行して実行されることはありません。
+ * 1 つ以上のクラスメソッドを並行して処理するデコレーターです。`@mutex` と並行して実行されることはありません。
  */
 function mutexReadonly<TFunction extends AsyncClassMethod>(
   method: TFunction,
@@ -171,4 +225,7 @@ function mutexReadonly<TFunction extends AsyncClassMethod>(
   };
 }
 
+/**
+ * デコレーターのメイン関数です。`mutex` デコレーターと `mutex.readonly` デコレーターを提供します。
+ */
 export default /* @__PURE__ */ Object.assign(mutex, { readonly: mutexReadonly });

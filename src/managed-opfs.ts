@@ -26,6 +26,7 @@ export type DuckdbOptions = Readonly<{
    * DuckDB の各種モジュールの情報です。
    */
   bundle: DuckdbBundle;
+
   /**
    * DuckDB のロガーです。
    *
@@ -35,7 +36,7 @@ export type DuckdbOptions = Readonly<{
 }>;
 
 /**
- * ファイルパスです。
+ * ファイルパスの型定義です。
  */
 export type FilePathLike = string | Path;
 
@@ -47,33 +48,39 @@ export type ManagedOpfsOptions = Readonly<{
    * バケット名です。
    */
   bucketName: string;
+
   /**
    * DuckDB 関連のオプションです。
    */
   duckdb: DuckdbOptions;
+
   /**
    * JavaScript の値と JSON 文字列を相互変換するための関数群です。
    *
    * @default JSON
    */
   json?: Json | undefined;
+
   /**
    * ManagedOpfs のロガーです。
    */
   logger?: Logger | undefined;
+
   /**
    * ファイルの説明文の最大サイズ (バイト数) です。
    *
    * @default 100 KiB
    */
   maxDescriptionSize?: number | undefined;
+
   /**
-   * ファイルのメタデータのの最大サイズ (バイト数) です。
+   * ファイルのメタデータの最大サイズ (バイト数) です。
    * このサイズは、メタデータを `json.stringify` で変換したあとの文字列に対して計算されます。
    *
    * @default 100 KiB
    */
   maxMetadataJsonSize?: number | undefined;
+
   /**
    * ファイルの説明文を全文検索用の文字列に変換する関数です。
    *
@@ -91,12 +98,14 @@ export type WriteFileOptions = Readonly<{
    * 判定できない場合は "application/octet-stream" になります。
    */
   mimeType?: string | undefined;
+
   /**
    * ファイルの説明文です。
    *
    * @default null
    */
   description?: string | null | undefined;
+
   /**
    * ファイルのメタデータです。
    *
@@ -114,12 +123,14 @@ export type CreateWritableOptions = Readonly<{
    * 判定できない場合は "application/octet-stream" になります。
    */
   mimeType?: string | undefined;
+
   /**
    * ファイルの説明文です。
    *
    * @default null
    */
   description?: string | null | undefined;
+
   /**
    * ファイルのメタデータです。
    *
@@ -138,18 +149,21 @@ export type OverwriteFileOptions = Readonly<{
    * @default undefined
    */
   data?: Uint8ArraySource | undefined;
+
   /**
    * ファイル形式です。
    *
    * @default undefined
    */
   mimeType?: string | undefined;
+
   /**
    * ファイルの説明文です。
    *
    * @default undefined
    */
   description?: string | null | undefined;
+
   /**
    * ファイルのメタデータです。
    *
@@ -168,12 +182,14 @@ export type CreateOverwritableOptions = Readonly<{
    * @default undefined
    */
   mimeType?: string | undefined;
+
   /**
    * ファイルの説明文です。
    *
    * @default undefined
    */
   description?: string | null | undefined;
+
   /**
    * ファイルのメタデータです。
    *
@@ -183,11 +199,11 @@ export type CreateOverwritableOptions = Readonly<{
 }>;
 
 /**
- * ファイルやディレクトリを削除するためのオプションです。
+ * ファイルやディレクトリーを削除するためのオプションです。
  */
 export type RemoveOptions = Readonly<{
   /**
-   * `true` にすると、パスがディレクトリだった場合、そのディレクトリ配下も全て削除します。
+   * `true` にすると、パスがディレクトリーだった場合、そのディレクトリー配下も全て削除します。
    *
    * @default false
    */
@@ -195,11 +211,11 @@ export type RemoveOptions = Readonly<{
 }>;
 
 /**
- * ファイルやディレクトリを削除するためのオプションです。
+ * ファイルやディレクトリーを削除するためのオプションです。
  */
 export type RemoveDirectoryOptions = Readonly<{
   /**
-   * `true` にすると、そのディレクトリ配下も全て削除します。
+   * `true` にすると、そのディレクトリー配下も全て削除します。
    *
    * @default false
    */
@@ -207,15 +223,16 @@ export type RemoveDirectoryOptions = Readonly<{
 }>;
 
 /**
- * ファイルやディレクトリのステータス情報です。
+ * ファイルやディレクトリーのステータス情報です。
  */
 export type Stats = {
   /**
    * `true` なら指定したパスはファイルです。
    */
   isFile: boolean;
+
   /**
-   * `true` なら指定したパスはディレクトリです。
+   * `true` なら指定したパスはディレクトリーです。
    */
   isDirectory: boolean;
 };
@@ -230,12 +247,14 @@ export type SearchFileOptions = Readonly<{
    * @default 上限なし
    */
   limit?: number | undefined;
+
   /**
-   * ディレクトリ内のファイルを再帰的に検索するなら `true`、しないなら `false` を指定します。
+   * ディレクトリー内のファイルを再帰的に検索するなら `true`、しないなら `false` を指定します。
    *
    * @default false
    */
   recursive?: boolean | undefined;
+
   /**
    * 検索にヒットしたと判断するスコアのしきい値です。
    *
@@ -252,10 +271,12 @@ export type SearchFileItem = {
    * バケット内のファイルパスです。
    */
   filePath: Path;
+
   /**
    * ファイルの説明文です。
    */
   description: string;
+
   /**
    * 検索スコアです。
    */
@@ -263,7 +284,7 @@ export type SearchFileItem = {
 };
 
 /**
- * ディレクトリまたはファイルをリストアップするためのオプションです。
+ * ディレクトリーまたはファイルをリストアップするためのオプションです。
  */
 export type ListOptions = Readonly<{
   /**
@@ -272,12 +293,14 @@ export type ListOptions = Readonly<{
    * @default undefined (上限なし)
    */
   limit?: number | undefined;
+
   /**
    * 検索結果の開始位置です。
    *
    * @default 0
    */
   offset?: number | undefined;
+
   /**
    * ファイル名の並び順です。
    *
@@ -294,32 +317,39 @@ export type ListItem = {
    * `true` ならファイルです。
    */
   isFile: boolean;
+
   /**
    * リストアイテムの名前です。
    */
   name: string;
 };
 
+/**
+ * OPFS 上にファイルを保存するためのクラスです。
+ */
 export default class ManagedOpfs {
   /**
-   * ログを記録する関数群
+   * ログを記録する関数群です。
    */
   readonly #logger: ConsoleLikeLogger;
+
   /**
-   * ファイルの付帯情報を管理するデータベース
+   * ファイルの付帯情報を管理するデータベースです。
    */
   readonly #catalog: Catalogdb;
+
   /**
-   * バケット内のディレクトリハンドラー
+   * バケット内のディレクトリーハンドラーです。
    */
   #bucket: Readonly<Record<"main", FileSystemDirectoryHandle>> | null;
+
   /**
    * バケット名です。
    */
   public readonly bucketName: BucketName;
 
   /**
-   * `ManagedOpfs` を構築します。
+   * `ManagedOpfs` の新しいインスタンスを構築します。
    *
    * @param options `ManagedOpfs` を構築するためのオプションです。
    */
@@ -351,7 +381,7 @@ export default class ManagedOpfs {
   }
 
   /**
-   * `true` なら `ManagedOpfs` が利用可能です。
+   * `ManagedOpfs` が利用可能かどうかを返します。
    */
   public get opened(): boolean {
     return this.#bucket !== null;
@@ -359,6 +389,9 @@ export default class ManagedOpfs {
 
   /**
    * ManagedOpfs の利用を開始します。
+   * このメソッドは、OPFS のディレクトリーハンドラーを取得し、データベースに接続します。
+   *
+   * @throws 処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex
   public async open(): Promise<void> {
@@ -387,6 +420,9 @@ export default class ManagedOpfs {
 
   /**
    * ManagedOpfs の利用を終了します。
+   * このメソッドは、データベースとの接続を切断し、ディレクトリーハンドラーをクリアします。
+   *
+   * @throws 処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex
   public async close(): Promise<void> {
@@ -402,9 +438,10 @@ export default class ManagedOpfs {
    * 指定したパスにファイルを書き込みます。
    *
    * @param path 書き込み先のファイルパスです。
-   * @param data `Uint8Array` になれる値の型です。
+   * @param data `Uint8Array` に変換できる値の型です。
    * @param options ファイル書き込み時のオプションです。
    * @returns ファイルの場所を示す `FileIdent` です。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex
   public async writeFile(
@@ -470,11 +507,12 @@ export default class ManagedOpfs {
   }
 
   /**
-   * 書き込みストリームを作成します。
+   * ファイルをストリームとして書き込むためのオブジェクトを作成します。
    *
    * @param path 書き込み先のファイルパスです。
    * @param options 書き込みストリームのオプションです。
    * @returns 書き込みストリームです。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex.readonly
   public async createWritable(
@@ -526,10 +564,11 @@ export default class ManagedOpfs {
   }
 
   /**
-   * ファイルを取得します。
+   * 指定したパスのファイルを読み込みます。
    *
    * @param path ファイルパスです。
    * @returns ファイルです。
+   * @throws `ManagedOpfs` が開かれていない場合やファイルが存在しない場合、エラーを投げます。
    */
   @mutex.readonly
   public async readFile(path: FilePathLike): Promise<File> {
@@ -584,6 +623,7 @@ export default class ManagedOpfs {
    * @param sourceFilePath 移動元のファイルパスです。
    * @param destinationFilePath 移動先のファイルパスです。
    * @returns 移動先のファイルの場所を示す `FileIdent` です。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex
   public async moveFile(
@@ -613,6 +653,7 @@ export default class ManagedOpfs {
    * @param sourceFilePath コピー元のファイルパスです。
    * @param destinationFilePath コピー先のファイルパスです。
    * @returns コピー先のファイルの場所を示す `FileIdent` です。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex
   public async copyFile(
@@ -700,7 +741,8 @@ export default class ManagedOpfs {
    *
    * @param path ファイルパスです。
    * @param options ファイル上書き時のオプションです。
-   * @returns コピー先のファイルの場所を示す `FileIdent` です。
+   * @returns 上書きしたファイルの場所を示す `FileIdent` です。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex
   public async overwriteFile(
@@ -807,11 +849,12 @@ export default class ManagedOpfs {
   }
 
   /**
-   * 上書きストリームを作成します。
+   * ファイルを上書きするためのストリームを作成します。
    *
    * @param path 上書き先のファイルパスです。
    * @param options 上書きストリームのオプションです。
    * @returns 上書きストリームです。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex.readonly
   public async createOverwritable(
@@ -890,9 +933,10 @@ export default class ManagedOpfs {
   // }
 
   /**
-   * ファイルを削除します。
+   * 指定したパスのファイルを削除します。
    *
-   * @param path バケット内のパスです。
+   * @param filePath バケット内のファイルパスです。
+   * @throws `ManagedOpfs` が開かれていない場合やファイルが存在しない場合、エラーを投げます。
    */
   @mutex
   public async removeFile(filePath: FilePathLike): Promise<void> {
@@ -905,7 +949,7 @@ export default class ManagedOpfs {
       const { entityId } = await this.#catalog.readEntityId({ filePath });
       await this.#bucket.main.removeEntry(entityId);
     } catch (ex) {
-      // 実際に保存されているエンティティがなくても、カタログから削除します。
+      // 実際に保存されているエンティティーがなくても、カタログから削除します。
       try {
         await this.#catalog.delete({ filePath });
       } catch (ex) {
@@ -915,7 +959,7 @@ export default class ManagedOpfs {
         );
       }
 
-      // 実際に保存されているエンティティがない場合はカスタムエラーを投げます。
+      // 実際に保存されているエンティティーがない場合はカスタムエラーを投げます。
       if (ex instanceof DOMException && ex.name === "NotFoundError") {
         throw new MopfsFileExistsError(this.bucketName, filePath, { cause: ex });
       }
@@ -924,7 +968,7 @@ export default class ManagedOpfs {
       throw ex;
     }
 
-    // 実際に保存されているエンティティが正常に削除されたので、カタログからも削除します。
+    // 実際に保存されているエンティティーが正常に削除されたので、カタログからも削除します。
     try {
       await this.#catalog.delete({ filePath });
     } catch (ex) {
@@ -946,26 +990,30 @@ export default class ManagedOpfs {
   // }
 
   /**
-   * パスが存在するか確認します。
+   * 指定したパスが存在するか確認します。
    *
    * @param filePath バケット内のファイルパスです。
    * @returns `true` なら存在します。
    */
   public async exists(filePath: FilePathLike): Promise<boolean>;
+
   /**
-   * パスが存在するか確認します。
+   * 指定したパスが存在するか確認します。
    *
-   * @param dirPath バケット内のディレクトリパスです。
+   * @param dirPath バケット内のディレクトリーパスです。
    * @returns `true` なら存在します。
    */
   public async exists(dirPath: readonly string[]): Promise<boolean>;
+
   /**
-   * パスが存在するか確認します。
+   * 指定したパスが存在するか確認します。
    *
    * @param path バケット内のパスです。
    * @returns `true` なら存在します。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   public async exists(path: FilePathLike | readonly string[]): Promise<boolean>;
+
   @mutex.readonly
   public async exists(path: FilePathLike | readonly string[]): Promise<boolean> {
     if (!this.#bucket) {
@@ -1014,10 +1062,11 @@ export default class ManagedOpfs {
   }
 
   /**
-   * ファイルやディレクトリのステータス情報を取得します。
+   * ファイルやディレクトリーのステータス情報を取得します。
    *
    * @param path バケット内のパスです。
-   * @returns ファイルやディレクトリのステータス情報です。
+   * @returns ファイルやディレクトリーのステータス情報です。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex.readonly
   public async stat(path: FilePathLike): Promise<Stats> {
@@ -1032,16 +1081,17 @@ export default class ManagedOpfs {
   /**
    * ファイルの説明文を対象に全文検索します。
    *
-   * @param dirPath バケット内のディレクトリパスです。
+   * @param dirPath バケット内のディレクトリーパスです。
    * @param query 検索クエリーです。
    * @param options ファイルの説明文を対象に全文検索するためのオプションです。
    * @returns ファイルの説明文を対象に全文検索した結果です。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex.readonly
   public async searchFile(
     dirPath: readonly string[],
     query: string,
-    options: SearchFileOptions,
+    options: SearchFileOptions | undefined = {},
   ): Promise<SearchFileItem[]> {
     if (!this.#bucket) {
       throw new MopfsError("ManagedOpfs not open");
@@ -1064,14 +1114,18 @@ export default class ManagedOpfs {
   }
 
   /**
-   * ディレクトリまたはファイルをリストアップします。
+   * ディレクトリーまたはファイルをリストアップします。
    *
-   * @param dirPath バケット内のディレクトリパスです。
-   * @param options ディレクトリまたはファイルをリストアップするためのオプションです。
+   * @param dirPath バケット内のディレクトリーパスです。
+   * @param options ディレクトリーまたはファイルをリストアップするためのオプションです。
    * @returns リストアップした結果です。
+   * @throws `ManagedOpfs` が開かれていない場合や処理中にエラーが発生した場合、エラーを投げます。
    */
   @mutex.readonly
-  public async list(dirPath: readonly string[], options: ListOptions): Promise<ListItem[]> {
+  public async list(
+    dirPath: readonly string[],
+    options: ListOptions | undefined = {},
+  ): Promise<ListItem[]> {
     if (!this.#bucket) {
       throw new MopfsError("ManagedOpfs not open");
     }

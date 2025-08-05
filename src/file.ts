@@ -1,9 +1,54 @@
 import type { File as NodeFile } from "node:buffer";
 import * as v from "valibot";
-import type Catalogdb from "./catalogdb.js";
 import FileIdent from "./file-ident.js";
 import Path from "./path.js";
 import * as schemas from "./schemas.js";
+
+/**
+ * ファイルに関する説明文とメタデータの操作を定義するインターフェースです。
+ * このインターフェースは、`File` クラスが依存するカタログデータベースの抽象化を提供します。
+ */
+interface Catalog {
+  /**
+   * ファイルの説明文を取得します。
+   *
+   * @param inp ファイルの説明文を取得するための入力パラメーターです。
+   * @returns ファイルの説明文を取得した結果です。
+   */
+  readDescription(
+    inp: Readonly<{
+      /**
+       * バケット内のファイルパスです。
+       */
+      filePath: Path;
+    }>,
+  ): Promise<{
+    /**
+     * ファイルの説明文です。
+     */
+    description: string | null;
+  }>;
+
+  /**
+   * ファイルのメタデータを取得します。
+   *
+   * @param inp ファイルのメタデータを取得するための入力パラメーターです。
+   * @returns ファイルのメタデータを取得した結果です。
+   */
+  readMetadata(
+    inp: Readonly<{
+      /**
+       * バケット内のファイルパスです。
+       */
+      filePath: Path;
+    }>,
+  ): Promise<{
+    /**
+     * ファイルのメタデータです。
+     */
+    metadata: unknown;
+  }>;
+}
 
 /**
  * `File` を構築するための入力パラメーターです。
@@ -12,110 +57,138 @@ type FileInput = Readonly<{
   /**
    * カタログデータベースです。
    */
-  catalog: Catalogdb;
+  catalog: Catalog;
+
   /**
-   * JavaScript のファイルオブジェクトです。
+   * JavaScript の `File` オブジェクト、または Node.js の `File` オブジェクトです。
    */
   file: globalThis.File | NodeFile;
+
   /**
    * バケット名です。
    */
   bucketName: v.InferOutput<typeof schemas.BucketName>;
+
   /**
    * バケット内のファイルパスです。
    */
   filePath: Path;
+
   /**
    * ファイルのチェックサム (MD5 ハッシュ値) です。
    */
   checksum: v.InferOutput<typeof schemas.Checksum>;
+
   /**
    * ファイル形式です。
    */
   mimeType: v.InferOutput<typeof schemas.MimeType>;
+
   /**
    * ファイルサイズ (バイト数) です。
    */
   fileSize: v.InferOutput<typeof schemas.UnsignedInteger>;
+
   /**
    * 最終更新日 (ミリ秒) です。
    */
   lastModified: number;
 }>;
 
+/**
+ * `File` の JSON 形式での表現を表す型です。
+ */
 export type FileJson = {
   /**
-   * バケット名です。
+   * ファイルが存在するバケットの名前です。
    */
   bucketName: v.InferOutput<typeof schemas.BucketName>;
+
   /**
    * バケット内のファイルパスです。
    */
   path: Path;
+
   /**
    * ファイルサイズ (バイト数) です。
    */
   size: v.InferOutput<typeof schemas.UnsignedInteger>;
+
   /**
    * ファイル形式です。
    */
   type: v.InferOutput<typeof schemas.MimeType>;
+
   /**
    * ファイルのチェックサム (MD5 ハッシュ値) です。
    */
   checksum: v.InferOutput<typeof schemas.Checksum>;
+
   /**
    * 最終更新日 (ミリ秒) です。
    */
   lastModified: number;
+
   /**
-   * `webkitdirectory` 属性が設定された `input` 要素において、ユーザーが選択したディレクトリーに対するファイルのパスです。
+   * `webkitdirectory` 属性が設定された `input` 要素でユーザーが選択した、祖先ディレクトリーを基準にしたファイルの相対パスです。
    */
   webkitRelativePath?: string;
 };
 
+/**
+ * ファイルの情報を表すクラスです。
+ */
 export default class File {
   /**
-   * カタログデータベース
+   * ファイルの情報が保存されているカタログデータベースです。
    */
-  readonly #catalog: Catalogdb;
+  readonly #catalog: Catalog;
+
   /**
-   * JavaScript のファイルオブジェクト
+   * ファイルの内容にアクセスするための元のファイルオブジェクトです。
    */
   readonly #file: globalThis.File | NodeFile;
+
   /**
-   * バケット名です。
+   * ファイルが存在するバケットの名前です。
    */
   public readonly bucketName: v.InferOutput<typeof schemas.BucketName>;
+
   /**
    * バケット内のファイルパスです。
    */
   public readonly path: Path;
+
   /**
    * ファイルのチェックサム (MD5 ハッシュ値) です。
    */
   public readonly checksum: v.InferOutput<typeof schemas.Checksum>;
+
   /**
    * ファイルサイズ (バイト数) です。
    */
   public readonly size: v.InferOutput<typeof schemas.UnsignedInteger>;
+
   /**
    * ファイル形式です。
    */
   public readonly type: v.InferOutput<typeof schemas.MimeType>;
+
   /**
    * 最終更新日 (ミリ秒) です。
    */
   public readonly lastModified: number;
+
   /**
-   * ユーザーが選択した祖先ディレクトリーを基準にしたファイルのパスを含む文字列
+   * ユーザーが選択した祖先ディレクトリーを基準にしたファイルの相対パスです。
+   * `webkitdirectory` 属性が設定された `input` 要素を通じて選択されたファイルにのみ存在します。
    */
   public readonly webkitRelativePath?: string;
 
   /**
-   * `File` を構築します。
+   * `File` の新しいインスタンスを構築します。
    *
-   * @param inp `File` を構築するための入力パラメーターです。`
+   * @param inp `File` を構築するための入力パラメーターです。
    */
   public constructor(inp: FileInput) {
     this.#catalog = inp.catalog;
@@ -168,9 +241,9 @@ export default class File {
   }
 
   /**
-   * ファイルの説明文を取得します。
+   * このファイルのカタログから説明文を取得します。
    *
-   * @returns ファイルの説明文です。
+   * @returns ファイルの説明文です。説明文がない場合は `null` を返します。
    */
   public async getDescription(): Promise<string | null> {
     const out = await this.#catalog.readDescription({ filePath: this.path });
@@ -178,7 +251,7 @@ export default class File {
   }
 
   /**
-   * ファイルのメタデータを取得します。
+   * このファイルのカタログからメタデータを取得します。
    *
    * @returns ファイルのメタデータです。
    */
@@ -188,7 +261,7 @@ export default class File {
   }
 
   /**
-   * `File` を JSON 形式にします。これは主にテスト/プリントデバッグ用です。
+   * `File` のプロパティーを JSON 形式に変換します。主にテストやデバッグでの利用を想定しています。
    *
    * @returns JSON 形式の `File` です。
    */

@@ -1,15 +1,32 @@
 import getTypeName, { type TypeName } from "./get-type-name.js";
 
+/**
+ * `globalThis.Error` の `options` 引数に `cause` プロパティーが存在するかどうかをチェックする型です。
+ * 存在する場合は `globalThis.ErrorOptions` を、存在しない場合は `cause` プロパティーを独自に定義した型を使用します。
+ */
 export type MopfsErrorOptions = "cause" extends keyof globalThis.Error
   ? Readonly<globalThis.ErrorOptions>
   : { readonly cause?: unknown };
 
+/**
+ * Mopfs エラーの基底クラスです。
+ */
 export class MopfsError extends globalThis.Error {
+  /**
+   * クラスの静的初期化ブロックです。
+   * プロトタイプの `name` プロパティーを "MopfsError" に設定します。
+   */
   static {
     this.prototype.name = "MopfsError";
   }
 
-  constructor(message: string, options?: MopfsErrorOptions | undefined) {
+  /**
+   * `MopfsError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param message エラーのメッセージです。
+   * @param options `cause` プロパティーを含むオプションです。
+   */
+  public constructor(message: string, options?: MopfsErrorOptions | undefined) {
     super(message, options);
 
     if (!("cause" in this) && options && "cause" in options) {
@@ -18,14 +35,35 @@ export class MopfsError extends globalThis.Error {
   }
 }
 
+/**
+ * 型が期待値と異なる場合に投げられるエラーです。
+ */
 export class MopfsTypeError extends MopfsError {
+  /**
+   * クラスの静的初期化ブロックです。
+   * プロトタイプの `name` プロパティーを "MopfsTypeError" に設定します。
+   */
   static {
     this.prototype.name = "MopfsTypeError";
   }
 
+  /**
+   * 期待される型です。
+   */
   public readonly expected: string;
+
+  /**
+   * 実際に受け取った値の型です。
+   */
   public readonly actual: TypeName;
 
+  /**
+   * `MopfsTypeError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param expectedType 期待される型名、または型名の配列です。
+   * @param actualValue 実際に受け取った値です。
+   * @param options `cause` プロパティーを含むオプションです。
+   */
   public constructor(
     expectedType: TypeName | readonly TypeName[],
     actualValue: unknown,
@@ -41,14 +79,35 @@ export class MopfsTypeError extends MopfsError {
   }
 }
 
+/**
+ * ファイルが見つからない場合に投げられるエラーです。
+ */
 export class MopfsFileNotFoundError extends MopfsError {
+  /**
+   * クラスの静的初期化ブロックです。
+   * プロトタイプの `name` プロパティーを "MopfsFileNotFoundError" に設定します。
+   */
   static {
     this.prototype.name = "MopfsFileNotFoundError";
   }
 
+  /**
+   * ファイルが存在するバケットの名前です。
+   */
   public readonly bucketName: string;
+
+  /**
+   * ファイルのパスです。
+   */
   public readonly filePath: string;
 
+  /**
+   * `MopfsFileNotFoundError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param bucketName ファイルが存在するバケットの名前です。
+   * @param filePath ファイルのパスです。
+   * @param options `cause` プロパティーを含むオプションです。
+   */
   public constructor(
     bucketName: string,
     filePath: string | Readonly<{ toString: () => string }>,
@@ -61,14 +120,35 @@ export class MopfsFileNotFoundError extends MopfsError {
   }
 }
 
+/**
+ * ファイルがすでに存在する場合に投げられるエラーです。
+ */
 export class MopfsFileExistsError extends MopfsError {
+  /**
+   * クラスの静的初期化ブロックです。
+   * プロトタイプの `name` プロパティーを "MopfsFileExistsError" に設定します。
+   */
   static {
     this.prototype.name = "MopfsFileExistsError";
   }
 
+  /**
+   * ファイルが存在するバケットの名前です。
+   */
   public readonly bucketName: string;
+
+  /**
+   * ファイルのパスです。
+   */
   public readonly filePath: string;
 
+  /**
+   * `MopfsFileExistsError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param bucketName ファイルが存在するバケットの名前です。
+   * @param filePath ファイルのパスです。
+   * @param options `cause` プロパティーを含むオプションです。
+   */
   public constructor(
     bucketName: string,
     filePath: string | Readonly<{ toString: () => string }>,
@@ -81,25 +161,51 @@ export class MopfsFileExistsError extends MopfsError {
   }
 }
 
+/**
+ * 複数のエラーをまとめるために使用されるエラーです。
+ */
 export class MopfsAggregateError extends MopfsError {
+  /**
+   * クラスの静的初期化ブロックです。
+   * プロトタイプの `name` プロパティーを "MopfsAggregateError" に設定します。
+   */
   static {
     this.prototype.name = "MopfsAggregateError";
   }
 
-  override cause: unknown[];
+  /**
+   * 発生したエラーの配列です。
+   */
+  public override cause: unknown[];
 
-  constructor(
+  /**
+   * `MopfsAggregateError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param errors 発生したエラーの配列です。
+   * @param options `cause` プロパティーを除くオプションです。
+   */
+  public constructor(
     errors: readonly unknown[],
     options?: Omit<MopfsErrorOptions, "cause"> | undefined,
   );
 
-  constructor(
+  /**
+   * `MopfsAggregateError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param message エラーのメッセージです。
+   * @param errors 発生したエラーの配列です。
+   * @param options `cause` プロパティーを除くオプションです。
+   */
+  public constructor(
     message: string,
     errors: readonly unknown[],
     options?: Omit<MopfsErrorOptions, "cause"> | undefined,
   );
 
-  constructor(
+  /**
+   * `MopfsAggregateError` クラスのオーバーロードされたコンストラクターの実装です。
+   */
+  public constructor(
     ...args:
       | [
         errors: readonly unknown[],
