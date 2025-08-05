@@ -402,10 +402,10 @@ export default class ManagedOpfs {
     await this.#catalog.connect();
     try {
       const fs = await window.navigator.storage.getDirectory();
-      const opfs = await fs.getDirectoryHandle("managed-opfs");
-      const bucket = await opfs.getDirectoryHandle(this.bucketName);
+      const opfs = await fs.getDirectoryHandle("managed-opfs", { create: false });
+      const bucket = await opfs.getDirectoryHandle(this.bucketName, { create: false });
       this.#bucket = {
-        main: await bucket.getDirectoryHandle("main"),
+        main: await bucket.getDirectoryHandle("main", { create: true }),
       };
     } catch (ex) {
       try {
@@ -1039,7 +1039,7 @@ export default class ManagedOpfs {
     }
 
     try {
-      await this.#bucket.main.getFileHandle(entityId);
+      await this.#bucket.main.getFileHandle(entityId, { create: false });
     } catch (ex) {
       if (ex instanceof DOMException && ex.name === "NotFoundError") {
         // 実際に保存されているファイルがないので、カタログから削除します。
