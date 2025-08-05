@@ -50,13 +50,18 @@ const test = vitest.extend<{
         bundle: duckdbBundle,
         logger: duckdbLogger,
       },
+      logger: mopfsLogger,
       maxDescriptionSize: 128,
     });
     await mopfs.open();
     await use(mopfs);
     await mopfs.close();
     const fs = await window.navigator.storage.getDirectory();
-    await fs.removeEntry("managed-opfs", { recursive: true }).catch(() => {});
+    const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+    for (let i = 0; i < 3; i++) {
+      await fs.removeEntry("managed-opfs", { recursive: true }).catch(() => {});
+      await sleep(500);
+    }
   },
   async mainDir({}, use) {
     const fs = await window.navigator.storage.getDirectory();

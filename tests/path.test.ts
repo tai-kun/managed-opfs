@@ -31,7 +31,7 @@ describe("Path.parse", () => {
   test("1024 文字を超えるパスはエラーを返す", ({ expect }) => {
     const longPath = "a".repeat(1025);
     expect(() => Path.parse(longPath))
-      .toThrow("Invalid path: cannot be longer than 1024 bytes");
+      .toThrow("Invalid path: Cannot be longer than 1024 bytes");
   });
 
   test("UTF-8 エンコード後に 1024 文字を超えるパスはエラーを返す", ({ expect }) => {
@@ -39,7 +39,7 @@ describe("Path.parse", () => {
 
     expect(pathWithMultiByteChars).toHaveLength(350);
     expect(() => Path.parse(pathWithMultiByteChars))
-      .toThrow("Invalid path: cannot be longer than 1024 bytes");
+      .toThrow("Invalid path: Cannot be longer than 1024 bytes");
   });
 
   test("スラッシュで始まるパスを許可する", ({ expect }) => {

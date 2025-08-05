@@ -1,6 +1,8 @@
 // 参考: https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/bucketnamingrules.html#general-purpose-bucket-names
 
 import { type Brand, IPV4_REGEX } from "valibot";
+import { MopfsInvalidBucketNameError } from "./error/errors.js";
+import getTypeName from "./error/get-type-name.js";
 import Result from "./result.js";
 
 // バケット名は、小文字、数字、ピリオド (.)、およびハイフン (-) のみで構成できます。
@@ -77,16 +79,25 @@ const BucketName = {
     options: BucketNameOptions | undefined = {},
   ): Result<BucketName<TBucketName>> {
     if (typeof bucketName !== "string") {
-      return Result.err(new Error("Invalid bucket name: must be a string"));
+      return Result.err(
+        new MopfsInvalidBucketNameError(
+          `Expected string, but got ${getTypeName(bucketName)}`,
+          String(bucketName),
+        ),
+      );
     }
 
     // バケット名は 3~63 文字の長さにする必要があります。
     // 正規表現のオーバーヘッドが発生する前に .length で高速に検証します。
     if (bucketName.length < 3) {
-      return Result.err(new Error("Invalid bucket name: cannot be shorter than 3 characters"));
+      return Result.err(
+        new MopfsInvalidBucketNameError("Cannot be shorter than 3 characters", bucketName),
+      );
     }
     if (bucketName.length > 63) {
-      return Result.err(new Error("Invalid bucket name: cannot be longer than 63 characters"));
+      return Result.err(
+        new MopfsInvalidBucketNameError("Cannot be longer than 63 characters", bucketName),
+      );
     }
 
     // バケット名には、連続する 2 つのピリオドを含めることはできません。
@@ -107,17 +118,17 @@ const BucketName = {
       || bucketName.endsWith("--x-s3")
       || bucketName.endsWith("--table-s3")
     ) {
-      return Result.err(new Error("Invalid bucket name: contains invalid characters"));
+      return Result.err(new MopfsInvalidBucketNameError("Contains invalid characters", bucketName));
     }
 
     // バケット名は IP アドレスの形式 (192.168.5.4 など) にはできません。
     if (options.allowDot && IPV4_REGEX.test(bucketName)) {
-      return Result.err(new Error("Invalid bucket name: cannot be an IP address"));
+      return Result.err(new MopfsInvalidBucketNameError("Cannot be an IP address", bucketName));
     }
 
     const REGEX = options.allowDot ? VALID_BUCKET_NAME_REGEX_DOT : VALID_BUCKET_NAME_REGEX;
     if (!REGEX.test(bucketName)) {
-      return Result.err(new Error("Invalid bucket name: contains invalid characters"));
+      return Result.err(new MopfsInvalidBucketNameError("Contains invalid characters", bucketName));
     }
 
     return Result.ok(bucketName as BucketName<TBucketName>);
@@ -156,7 +167,7 @@ const BucketName = {
 
     return (result.ok && result.value === bucketName) || !result.ok
       ? result
-      : Result.err(new Error("Invalid bucket name: needs transform")); // 今はここに到達しません。
+      : Result.err(new MopfsInvalidBucketNameError("Needs transform", bucketName)); // 今はここに到達しません。
   },
 };
 

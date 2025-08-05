@@ -66,7 +66,11 @@ const test = vitest.extend<{
     await use(catalog);
     await catalog.disconnect();
     const fs = await window.navigator.storage.getDirectory();
-    await fs.removeEntry("managed-opfs", { recursive: true }).catch(() => {});
+    const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+    for (let i = 0; i < 3; i++) {
+      await fs.removeEntry("managed-opfs", { recursive: true }).catch(() => {});
+      await sleep(500);
+    }
   },
 });
 

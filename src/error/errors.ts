@@ -224,3 +224,63 @@ export class MopfsAggregateError extends MopfsError {
     this.cause = errors.slice();
   }
 }
+
+/**
+ * バケット名の検証エラーです。
+ */
+export class MopfsInvalidBucketNameError extends MopfsError {
+  /**
+   * クラスの静的初期化ブロックです。
+   * プロトタイプの `name` プロパティーを "MopfsInvalidBucketNameError" に設定します。
+   */
+  static {
+    this.prototype.name = "MopfsInvalidBucketNameError";
+  }
+
+  /**
+   * 検証したバケット名です。
+   */
+  public readonly bucketName: string;
+
+  /**
+   * `MopfsInvalidBucketNameError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param message エラーのメッセージです。
+   * @param path 検証したバケット名です。
+   * @param options `cause` プロパティーを含むオプションです。
+   */
+  public constructor(message: string, bucketName: string, options?: MopfsErrorOptions | undefined) {
+    super("Invalid bucket name: " + message, options);
+    this.bucketName = bucketName;
+  }
+}
+
+/**
+ * パスの検証エラーです。
+ */
+export class MopfsInvalidPathError extends MopfsError {
+  /**
+   * クラスの静的初期化ブロックです。
+   * プロトタイプの `name` プロパティーを "MopfsInvalidPathError" に設定します。
+   */
+  static {
+    this.prototype.name = "MopfsInvalidPathError";
+  }
+
+  /**
+   * 検証したパスです。
+   */
+  public readonly path: string;
+
+  /**
+   * `MopfsInvalidPathError` クラスの新しいインスタンスを初期化します。
+   *
+   * @param message エラーのメッセージです。
+   * @param path 検証したパスです。
+   * @param options `cause` プロパティーを含むオプションです。
+   */
+  public constructor(message: string, path: string, options?: MopfsErrorOptions | undefined) {
+    super("Invalid path: " + message, options);
+    this.path = path;
+  }
+}

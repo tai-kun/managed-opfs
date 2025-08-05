@@ -1,4 +1,5 @@
-import { MopfsError } from "./error/errors.js";
+import { MopfsInvalidPathError, MopfsTypeError } from "./error/errors.js";
+import getTypeName from "./error/get-type-name.js";
 import Result from "./result.js";
 import utf8 from "./utf8.js";
 
@@ -77,7 +78,7 @@ export default class Path {
     const result = Path.safeParse(path);
     return (result.ok && result.value.fullpath === path) || !result.ok
       ? result
-      : Result.err(new Error("Invalid bucket name: needs transform"));
+      : Result.err(new MopfsInvalidPathError("Needs transform", path));
   }
 
   /**
@@ -130,7 +131,7 @@ export default class Path {
       // 内部利用ではエンコードのオーバーヘッドを減らすために `path` にバッファーが渡されます。
       const buff: unknown = path;
       if (!(buff instanceof Uint8Array)) {
-        throw new Error("Invalid path: must be a Uint8Array");
+        throw new MopfsTypeError("Uint8Array", buff);
       }
 
       this.#pathBuff = buff;
@@ -274,20 +275,22 @@ export default class Path {
  */
 function encodePath(path: string): Result<Uint8Array> {
   if (typeof path !== "string") {
-    return Result.err(new MopfsError("Invalid path: must be a string"));
+    return Result.err(
+      new MopfsInvalidPathError(`Expected string, but got ${getTypeName(path)}`, String(path)),
+    );
   }
 
   // エンコードでオーバーヘッドが発生する前に .length で高速に検証します。
   if (path.length > 1024) {
-    return Result.err(new MopfsError("Invalid path: cannot be longer than 1024 bytes"));
+    return Result.err(new MopfsInvalidPathError("Cannot be longer than 1024 bytes", path));
   }
 
   const encoded = utf8.encode(path);
   if (encoded.length > 1024) {
-    return Result.err(new MopfsError("Invalid path: cannot be longer than 1024 bytes"));
+    return Result.err(new MopfsInvalidPathError("Cannot be longer than 1024 bytes", path));
   }
   if (!utf8.isValidUtf8(encoded)) {
-    return Result.err(new MopfsError("Invalid path: malformed UTF-8"));
+    return Result.err(new MopfsInvalidPathError("Malformed UTF-8", path));
   }
 
   return Result.ok(encoded);
