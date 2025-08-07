@@ -147,7 +147,7 @@ export default class File {
   /**
    * ファイルの内容にアクセスするための元のファイルオブジェクトです。
    */
-  public readonly file: globalThis.File | NodeFile;
+  readonly #file: globalThis.File | NodeFile;
 
   /**
    * ファイルが存在するバケットの名前です。
@@ -198,10 +198,17 @@ export default class File {
     this.type = inp.mimeType;
     this.checksum = inp.checksum;
     this.lastModified = inp.lastModified;
-    this.file = inp.file;
+    this.#file = inp.file;
     if ("webkitRelativePath" in inp.file) {
       this.webkitRelativePath = inp.file.webkitRelativePath;
     }
+  }
+
+  /**
+   * 元のファイルオブジェクトです。
+   */
+  get file(): globalThis.File {
+    return this.#file as globalThis.File;
   }
 
   /**
@@ -210,7 +217,7 @@ export default class File {
    * @returns `ArrayBuffer` 形式のファイルの内容です。
    */
   public async arrayBuffer(): Promise<ArrayBuffer> {
-    return await this.file.arrayBuffer();
+    return await this.#file.arrayBuffer();
   }
 
   /**
@@ -219,7 +226,7 @@ export default class File {
    * @returns `Uint8Array` 形式のファイルの内容です。
    */
   public async bytes(): Promise<Uint8Array> {
-    return await this.file.bytes();
+    return await this.#file.bytes();
   }
 
   /**
@@ -228,7 +235,7 @@ export default class File {
    * @returns `ReadableStream` 形式のファイルの内容です。
    */
   public stream(): ReadableStream<Uint8Array> {
-    return this.file.stream();
+    return this.#file.stream();
   }
 
   /**
@@ -237,7 +244,7 @@ export default class File {
    * @returns 文字列形式のファイルの内容です。
    */
   public async text(): Promise<string> {
-    return await this.file.text();
+    return await this.#file.text();
   }
 
   /**
